@@ -4,7 +4,7 @@ import * as antIcon from "react-icons/ai";
 import style from "styles/nav.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
-import { signInWithPopup, GoogleAuthProvider, signOut, getAuth, signInWithRedirect, getRedirectResult } from "firebase/auth";
+import { signInWithPopup, GoogleAuthProvider, signOut, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { auth, provider } from "src/firebase";
 import { setUser, clearUser } from "@redux/actions/user_action";
 
@@ -13,11 +13,8 @@ function TotalMenu({ visible, onCloseMenu }) {
 
   //로그인
   const googleHandler = async () => {
-    provider.setCustomParameters({ prompt: "select_account" });
-    const auth = getAuth();
     signInWithRedirect(auth, provider);
   };
-  const auth = getAuth();
   auth &&
   getRedirectResult(auth)
     .then((result) => {
@@ -81,13 +78,11 @@ function TotalMenu({ visible, onCloseMenu }) {
           <antIcon.AiOutlineClose />
         </button>
         <ul className={style.nav} onClick={onLinkCheck}>
-          {userInfo && userInfo.email === "sooya1207@gmail.com" && (
             <li>
               <Link href="/regist">
                 <a>등록</a>
               </Link>
-            </li>
-          )}
+            </li>            
         </ul>
       </nav>
       <div

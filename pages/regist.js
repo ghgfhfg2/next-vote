@@ -3,13 +3,16 @@ import { Form, Input, Button, Checkbox, Radio } from "antd";
 import { db } from "src/firebase";
 import { ref, set } from "firebase/database";
 import uuid from "react-uuid"
+import { getFormatDate } from "@component/CommonFunc"
 
 function regist() {
   const onFinish = (values) => {
+    const date = getFormatDate(new Date());
     const uid = uuid();
     console.log(values)
     set(ref(db,`list/${uid}`),{
-      ...values
+      ...values,
+      date
     })
   };
   const onFinishFailed = (errorInfo) => {
@@ -33,7 +36,7 @@ function regist() {
         <Form.Item
           label="제목"
           name="title"
-          rules={[{ required: true, message: "title은 필수입니다." }]}
+          rules={[{ required: true, message: "제목은 필수입니다." }]}
         >
           <Input />
         </Form.Item>

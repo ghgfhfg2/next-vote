@@ -1,14 +1,30 @@
 import React, { useState, useEffect } from "react";
 import style from "styles/list.module.css";
 import { db } from "src/firebase";
-import { collection, getDocs, addDoc } from "firebase/firestore";
+import { ref, onValue, off } from "firebase/database";
+import Link from "next/link";
 
 function List() {
   const [listData, setListData] = useState();
   useEffect(() => {
-    let listArr = [];
-    
+    const listRef = ref(db, 'list')
+    onValue(listRef, data=>{
+      let listArr = [];
+      data.forEach(el=>{
+        listArr.push({
+          ...el.val(),
+          uid:el.key
+        })
+      })
+      setListData(listArr)
+    })
+    return () => {
+      off(listRef)
+    };
   }, []);
+
+
+  
   return (
     <>
       <ul className={style.list}>
@@ -18,9 +34,9 @@ function List() {
               <dl>
                 <dt>{el.title}</dt>
                 <dd>
-                  <a href={el.url} target="_blank">
-                    바로가기
-                  </a>
+                  <Link href={`/view/${el.uid}`}>
+                    입장
+                  </Link>
                 </dd>
               </dl>
             </li>
