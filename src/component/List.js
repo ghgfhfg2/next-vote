@@ -7,12 +7,7 @@ function List() {
   const [listData, setListData] = useState();
   useEffect(() => {
     let listArr = [];
-    getDocs(collection(db, "portfolio")).then((el) => {
-      el.docs.forEach((el) => {
-        listArr.push(el.data());
-      });
-      setListData(listArr);
-    });
+    
   }, []);
   return (
     <>
