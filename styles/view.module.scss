@@ -1,0 +1,110 @@
+@import 'scss-common.scss';
+.view_con_box{
+  @include flex($d:column);
+  width: 100%;
+}
+.ranking_box{
+  width: 100%;
+  background-color: #f1f1f1;
+  z-index: 10;
+  position: sticky;
+  top:50px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.ranking{
+  width: 100%;
+  z-index: 10;
+  position: relative;
+  padding: 1rem 0.5rem;
+  overflow: auto hidden;
+  margin-bottom: 0;
+  @include flex();
+  li{
+    @include flex();
+    background-color: #fff;
+    min-width: 25%;
+    border:1px solid #ddd;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);
+    margin: 0 0.5rem;
+    flex-shrink: 0;
+    position: relative;
+    padding-left: 30px;
+    .rank{
+      width: 30px;height: 100%;
+      border-right: 1px solid #ddd;
+      display: inline-block;
+      position: absolute;
+      left:0;top:0;
+      font-size: 18px;
+      font-family: 'Oswald';
+      color: #333;
+      @include flex($j:center);
+    }
+    .rank_con{
+      @include flex($j:space-between);
+      padding:1rem;
+      flex-shrink: 0;
+    }
+  }
+}
+
+.vote_list{
+  width:100%;
+  max-width: 1000px;
+  margin-bottom: 0;
+  flex:1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding:0 1rem;
+  li{
+    width: 100%;
+    margin: 1rem 0;
+    @include flex();
+  }
+  .profile{
+    margin-right: 10px;
+    @include flex($d:column,$a:flex-end);
+    font-size: 12px;
+    .date{color: #888;font-size: 11px;}
+  }
+  .con{
+    flex:1;
+    @include flex($j:space-between);
+    padding:1rem;    
+    border:1px solid #ddd;
+    box-shadow: 0 0 4px rgba(0,0,0,0.2);    
+  }
+}
+.title_box{margin-right: 1rem}
+.btn_box{
+  @include flex();
+}
+.count{margin-right: 5px;font-weight: 500;}
+.empty_box{height: 106px;flex-shrink: 0;}
+.submit_box{
+  position: fixed;
+  width: 100%;
+  padding: 1rem;
+  height: auto;
+  z-index: 60;
+  bottom: 0;left: 0;
+  transform: translateY(100%);
+  transition: 0.3s;
+  background-color: #fff;
+  box-shadow: 0 -1px 4px rgba(0,0,0,0.2);
+}
+.bg_box{
+  width: 100vw;height: 100vh;
+  position: fixed;left:0;top:0;
+  background: rgba(0,0,0,0.4);
+  z-index: 50;
+}
+.btn_vote{padding:0;border:none;}
+.ic_vote{font-size: 19px;color:$p-color;margin-top: 5px;}
+.empty{width: 100%;height: 40px;}
+.btn_open{
+  width: 100%;height: 40px;background-color: $p-color;
+  border:none;color:#fff;
+  position: fixed;bottom: 0;left:0;
+}

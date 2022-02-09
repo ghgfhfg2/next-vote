@@ -5,6 +5,8 @@
   padding: 0 10px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
   position: sticky;
+  background-color: #fff;
+  z-index: 50;
   top: 0;
   @include flex($j: space-between);
   .btn-menu {

@@ -1,5 +1,4 @@
-import { SET_USER } from "../actions/types";
-import { CLEAR_USER } from "../actions/types";
+import { SET_USER, CLEAR_USER } from "../actions/types";
 
 const initState = {
   currentUser: null,
@@ -24,5 +23,6 @@ const user = (state = initState, action) => {
       return state;
   }
 };
+
 
 export default user;

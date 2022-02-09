@@ -123,5 +123,11 @@ table {
   border-spacing: 0; }
 
 #content {
+  position: relative;
   width: 100%;
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: 0; }
+
+.content_box {
   padding: 1rem; }

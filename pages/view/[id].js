@@ -12,10 +12,10 @@ export default function View() {
   const uid = router.query.id
 
   const [roomData, setRoomData] = useState();
+  const [pwEnter, setPwEnter] = useState(true);
   useEffect(() => {
     const listRef = ref(db, `list/${uid}`)
     onValue(listRef, data=>{
-      console.log(data.key)
       setRoomData({
         ...data.val(),
         uid
@@ -26,7 +26,6 @@ export default function View() {
     };
   }, [pwEnter]);
   
-  const [pwEnter, setPwEnter] = useState(true);
   const onSearch = (e) => {
     const pw = roomData.password
     if(e == pw){
@@ -43,11 +42,13 @@ export default function View() {
         <>
         {roomData.password && pwEnter ? (
           <>
-            <Search
-             placeholder="암호를 입력하세요" 
-             onSearch={onSearch} 
-             enterButton 
-            />
+            <div className="content_box">
+              <Search
+              placeholder="암호를 입력하세요" 
+              onSearch={onSearch} 
+              enterButton 
+              />
+            </div>
           </>
           ):(
           <>  

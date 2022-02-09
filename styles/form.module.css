@@ -1,3 +1,8 @@
 @import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");
 .com-tab-box .tab-content {
   display: none; }
+
+.form {
+  position: relative; }
+  .form .item {
+    margin-bottom: 10px; }
