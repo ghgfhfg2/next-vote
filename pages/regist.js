@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, Input, Button, Checkbox, Radio } from "antd";
+import { Form, Input, Button, Checkbox, Radio, InputNumber } from "antd";
 import { db } from "src/firebase";
 import { ref, set } from "firebase/database";
 import uuid from "react-uuid"
@@ -9,7 +9,6 @@ function regist() {
   const onFinish = (values) => {
     const date = getFormatDate(new Date());
     const uid = uuid();
-    console.log(values)
     set(ref(db,`list/${uid}`),{
       ...values,
       date
@@ -58,6 +57,12 @@ function regist() {
               <Radio.Button value={1}>단일투표</Radio.Button>
               <Radio.Button value={2}>중복투표</Radio.Button>
             </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            label="의견제안 가능횟수(최대5회)"
+            name="max_vote"
+          >
+            <InputNumber min={1} max={5} />
           </Form.Item>
           <Form.Item
             label="투표자공개"

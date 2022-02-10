@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setVoteList } from "@redux/actions/vote_action";
 import { Form , Input, Button, message } from "antd";
 import { db } from "src/firebase";
-import { ref, set, onValue, off, runTransaction, query, limitToLast } from "firebase/database";
+import { get, ref, set, onValue, off, runTransaction, update } from "firebase/database";
 import { getFormatDate } from "@component/CommonFunc";
 import uuid from "react-uuid"
 import style from "styles/view.module.css";
@@ -16,10 +16,16 @@ function ViewCon({uid}) {
   const formRef = useRef()
   
   const userInfo = useSelector((state) => state.user.currentUser);
+  const [roomData, setRoomData] = useState();
   const [voteListData, setVoteListData] = useState();
 
   const [ranking, setRanking] = useState([]);
   useEffect(() => {
+    let roomRef = ref(db, `list/${uid}`)
+      onValue(roomRef, data=>{
+        setRoomData(data.val())
+      })
+    
     let voteRef = ref(db, `vote_list/${uid}`)
       onValue(voteRef, data=>{
         let arr = [];
@@ -29,6 +35,9 @@ function ViewCon({uid}) {
             uid:el.key
           })
         });     
+        arr.sort((a,b)=>{
+          return a.date.timestamp - b.date.timestamp;
+        })
         setVoteListData(arr)
         let rankArr = arr.concat();
         rankArr = rankArr.sort((a,b)=>{
@@ -41,6 +50,9 @@ function ViewCon({uid}) {
     };
   }, []);
 
+
+  
+
   const scrollToBottom = () => {
     const h = document.body.scrollHeight
     window.scrollTo(0,h);
@@ -50,28 +62,59 @@ function ViewCon({uid}) {
   }, [voteListData])
 
   const onFinish = (values) => {
+    runTransaction(ref(db,`list/${uid}/${userInfo.uid}`), pre => {
+      if(pre && pre.submit_count && pre.submit_count >= roomData.max_vote){
+        message.error(`최대 제안횟수를 초과했습니다.`);
+        return;
+      }else{
+        onSubmit(values);
+        closeSubmitPop();    
+        let res = {
+          ...pre,
+          submit_count : pre && pre.submit_count ? pre.submit_count+1 : 1,
+        }
+        return res;
+      }
+    })
+  };
+
+  const onSubmit = (values) => {
     const date = getFormatDate(new Date());
     const uid_ = uuid();
     const val = {
       ...values,
       date,
       user_name:userInfo.displayName,
-      user_uid:userInfo.uid,
-      vote_count:0
+      user_uid:[userInfo.uid],
+      vote_count:1
     }
     set(ref(db,`vote_list/${uid}/${uid_}`),{
       ...val
-    })
-    dispatch(setVoteList(val));    
-    closeSubmitPop();
-    formRef.current.setFieldsValue({
-      title:undefined
-    })
-  };
+    })    
+  }
 
-  const onVote = (uid_) => {
+  const onVote = (uid_,user_uid) => {
+    if(user_uid.includes(userInfo.uid)){
+      message.error('이미 투표한 의견입니다.');
+      return
+    }
+    if(roomData.type === 1 && roomData[userInfo.uid].vote_count >= 1){
+      message.error('단일투표 입니다.');
+      return;
+    }
+    update(ref(db,`vote_list/${uid}/${uid_}`),{
+      user_uid: [...user_uid,userInfo.uid]
+    })  
     runTransaction(ref(db,`vote_list/${uid}/${uid_}/vote_count`),pre => {
       return pre ? ++pre : 1;
+    })
+
+    runTransaction(ref(db,`list/${uid}/${userInfo.uid}`), pre => {
+      let res = {
+        ...pre,
+        vote_count : pre && pre.vote_count ? pre.vote_count+1 : 1,
+      }
+      return res;
     })
   }
 
@@ -84,6 +127,9 @@ function ViewCon({uid}) {
   const closeSubmitPop = () => {
     setsubmitPop(false);
     submitBox.current.style.transform = 'translateY(100%)'
+    formRef.current.setFieldsValue({
+      title:undefined
+    });
     setTimeout(()=>{
       scrollToBottom();
     },10)
@@ -105,7 +151,7 @@ function ViewCon({uid}) {
                   <span className={style.count}>
                     {el.vote_count > 0 ? <>{el.vote_count}</> : `0`}
                   </span>
-                  <Button className={style.btn_vote} onClick={()=>{onVote(el.uid)}}><AiOutlineLike className={style.ic_vote} /></Button>
+                  <Button className={style.btn_vote} onClick={()=>{onVote(el.uid,el.user_uid)}}><AiOutlineLike className={style.ic_vote} /></Button>
                 </div>
               </div>
             </li>
@@ -126,7 +172,7 @@ function ViewCon({uid}) {
                 <span className={style.count}>
                   {el.vote_count > 0 ? <>{el.vote_count}</> : `0`}
                 </span>
-                <Button className={style.btn_vote} onClick={()=>{onVote(el.uid)}}><AiOutlineLike className={style.ic_vote} /></Button>
+                <Button className={style.btn_vote} onClick={()=>{onVote(el.uid,el.user_uid)}}><AiOutlineLike className={style.ic_vote} /></Button>
               </div>
             </div>
           </li>
@@ -152,9 +198,15 @@ function ViewCon({uid}) {
           >
             <Input placeholder="제목" />
           </Form.Item>
-            <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
-              Submit
-            </Button>
+          <Form.Item
+            className={form.item}
+            name="link"
+          >
+            <Input placeholder="링크주소" />
+          </Form.Item>
+          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+            Submit
+          </Button>
         </Form>
       </div>
     </div>

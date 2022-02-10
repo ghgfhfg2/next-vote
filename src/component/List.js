@@ -3,11 +3,13 @@ import style from "styles/list.module.css";
 import { db } from "src/firebase";
 import { ref, onValue, off } from "firebase/database";
 import Link from "next/link";
+import {useRouter} from 'next/router'
 
 function List() {
+  const router = useRouter();
   const [listData, setListData] = useState();
   useEffect(() => {
-    const listRef = ref(db, 'list')
+    const listRef = ref(db, 'list');
     onValue(listRef, data=>{
       let listArr = [];
       data.forEach(el=>{
@@ -17,12 +19,15 @@ function List() {
         })
       })
       setListData(listArr)
-    })
+    });
     return () => {
       off(listRef)
     };
   }, []);
-
+  
+  const onRouter = () => {
+    router.push('/regist')
+  }
 
   
   return (
