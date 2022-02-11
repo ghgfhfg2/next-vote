@@ -3,10 +3,10 @@ import style from "styles/list.module.css";
 import { db } from "src/firebase";
 import { ref, onValue, off } from "firebase/database";
 import Link from "next/link";
-import {useRouter} from 'next/router'
+import * as ioIcon from 'react-icons/io5'; 
+import * as bsIcon from 'react-icons/bs';
 
 function List() {
-  const router = useRouter();
   const [listData, setListData] = useState();
   useEffect(() => {
     const listRef = ref(db, 'list');
@@ -25,10 +25,6 @@ function List() {
     };
   }, []);
   
-  const onRouter = () => {
-    router.push('/regist')
-  }
-
   
   return (
     <>
@@ -38,10 +34,13 @@ function List() {
             listData.map((el, idx) => (
               <li key={idx}>
                 <dl>
-                  <dt>{el.title}</dt>
+                  <dt>
+                    <span className={style.tit}>{el.title}</span>
+                    <span className={style.limit}><bsIcon.BsPerson />1/3</span>
+                  </dt>
                   <dd>
                     <Link href={`/view/${el.uid}`}>
-                      입장
+                      <button type="button"><ioIcon.IoEnterOutline /></button>
                     </Link>
                   </dd>
                 </dl>

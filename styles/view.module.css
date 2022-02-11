@@ -11,10 +11,9 @@
 
 .ranking_box {
   width: 100%;
-  background-color: #f1f1f1;
   z-index: 10;
   position: sticky;
-  top: 50px;
+  top: 0;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); }
 
 .ranking {
@@ -22,6 +21,7 @@
   z-index: 10;
   position: relative;
   padding: 1rem 0.5rem;
+  border-top: 1px solid #ddd;
   overflow: auto hidden;
   margin-bottom: 0;
   display: flex;
@@ -38,10 +38,11 @@
   min-width: 25%;
   border: 1px solid #ddd;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-  margin: 0 0.5rem;
+  margin: 0 0.25rem;
   flex-shrink: 0;
   position: relative;
-  padding-left: 30px; }
+  padding-left: 30px;
+  border-radius: 1rem; }
 
 .ranking li .rank {
   width: 30px;
@@ -98,12 +99,14 @@
 
 .vote_list .con {
   flex: 1;
+  background-color: #fff;
   display: flex;
   justify-content: space-between;
   align-items: center;
   flex-direction: row;
   padding: 1rem;
   border: 1px solid #ddd;
+  border-radius: 1rem;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2); }
 
 .title_box {
@@ -151,7 +154,7 @@
 
 .ic_vote {
   font-size: 19px;
-  color: #0e62b1;
+  color: #1890ff;
   margin-top: 5px; }
 
 .empty {
@@ -161,9 +164,74 @@
 .btn_open {
   width: 100%;
   height: 40px;
-  background-color: #0e62b1;
+  background-color: #1890ff;
   border: none;
   color: #fff;
   position: fixed;
   bottom: 0;
   left: 0; }
+
+.desc {
+  margin-right: 1rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column; }
+
+.vote_link {
+  margin-top: 5px; }
+
+.room_data {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
+
+.room_left {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-start;
+  flex-direction: column;
+  flex-wrap: wrap;
+  background-color: #fff;
+  padding: 0.6rem 1rem; }
+
+.room_left h2 {
+  text-align: left;
+  font-size: 16px;
+  margin-right: 15px;
+  margin-bottom: 0;
+  font-weight: 700;
+  line-height: 1.4; }
+
+.room_info {
+  font-size: 11px;
+  flex-shrink: 0;
+  color: #888;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  margin-bottom: 5px; }
+
+.room_info li {
+  margin-right: 5px;
+  border-radius: 5px;
+  border: 1px solid #ddd;
+  padding: 5px;
+  line-height: 1;
+  flex-shrink: 0; }
+
+.room_out {
+  margin-left: auto;
+  margin-right: 0.6rem;
+  border: none;
+  background: none;
+  padding: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; }
+
+.room_out svg {
+  font-size: 22px; }

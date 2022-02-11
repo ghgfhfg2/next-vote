@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { setVoteList } from "@redux/actions/vote_action";
 import { Form , Input, Button, message } from "antd";
 import { db } from "src/firebase";
 import { get, ref, set, onValue, off, runTransaction, update } from "firebase/database";
@@ -9,11 +8,13 @@ import uuid from "react-uuid"
 import style from "styles/view.module.css";
 import form from "styles/form.module.css";
 import { AiOutlineLike } from "react-icons/ai";
+import { IoExitOutline } from "react-icons/io5";
+import {useRouter} from 'next/router';
 
 
 function ViewCon({uid}) {
-  let dispatch = useDispatch();
-  const formRef = useRef()
+  const formRef = useRef();
+  const router = useRouter();
   
   const userInfo = useSelector((state) => state.user.currentUser);
   const [roomData, setRoomData] = useState();
@@ -50,7 +51,6 @@ function ViewCon({uid}) {
     };
   }, []);
 
-
   
 
   const scrollToBottom = () => {
@@ -62,6 +62,9 @@ function ViewCon({uid}) {
   }, [voteListData])
 
   const onFinish = (values) => {
+    const linkRegex = /[\<\>\{\}\s]/g;
+    values.title && values.title.replace(linkRegex,"")
+    values.link = values.link ? values.link.replace(linkRegex,"") : ''
     runTransaction(ref(db,`list/${uid}/${userInfo.uid}`), pre => {
       if(pre && pre.submit_count && pre.submit_count >= roomData.max_vote){
         message.error(`최대 제안횟수를 초과했습니다.`);
@@ -98,7 +101,7 @@ function ViewCon({uid}) {
       message.error('이미 투표한 의견입니다.');
       return
     }
-    if(roomData.type === 1 && roomData[userInfo.uid].vote_count >= 1){
+    if(roomData.type === 1 && roomData[userInfo.uid] && roomData[userInfo.uid].vote_count >= 1){
       message.error('단일투표 입니다.');
       return;
     }
@@ -135,17 +138,44 @@ function ViewCon({uid}) {
     },10)
   }
 
+  const onOutView = () => {
+    router.push('/')
+  }
+
   return <>
+    
     <div className={style.view_con_box}>
       <div className={style.ranking_box}>
+        {roomData &&
+        <div className={style.room_data}>
+          <div className={style.room_left}>
+            <ul className={style.room_info}>
+              <li>
+                {roomData.type === 1 ? `단일투표` : `중복투표`}
+              </li>
+              <li>{`${roomData.max_vote}회 제안가능`}</li>
+              <li>{roomData.voter === 1 ? `공개투표` : `비밀투표`}</li>
+            </ul>
+            <h2>{roomData.title}</h2>
+          </div>
+          <button type="button" className={style.room_out} onClick={onOutView}>
+            <IoExitOutline />
+          </button>
+        </div>
+        }
         {voteListData && voteListData.length > 0 && 
         <ul className={style.ranking}>
           {ranking.map((el,idx)=>(
             <li key={idx}>
               <span className={style.rank}>{idx+1}</span>
               <div className={style.rank_con}>
-                <div className={style.title_box}>
-                  {el.title}
+                <div className={style.desc}>
+                  <span className={style.vote_tit}>{el.title}</span>
+                  {el.link &&
+                  <span className={style.vote_link}>
+                    <a href={el.link} target="_blank">{el.link}</a>
+                  </span>
+                  }
                 </div>
                 <div className={style.btn_box}>
                   <span className={style.count}>
@@ -167,7 +197,14 @@ function ViewCon({uid}) {
               <span className={style.date}>{`${el.date.hour}:${el.date.min}`}</span>
             </div>
             <div className={style.con}>
-              {el.title}
+              <div className={style.desc}>
+                <span className={style.vote_tit}>{el.title}</span>
+                {el.link &&
+                <span className={style.vote_link}>
+                  <a href={el.link} target="_blank">{el.link}</a>
+                </span>
+                }
+              </div>
               <div className={style.btn_box}>
                 <span className={style.count}>
                   {el.vote_count > 0 ? <>{el.vote_count}</> : `0`}
@@ -179,7 +216,7 @@ function ViewCon({uid}) {
         ))}
       </ul>
       <div className={style.empty}></div>
-      <button type="button" className={style.btn_open} onClick={onSubmitPop}>의견내기</button>
+      <button type="button" className={style.btn_open} onClick={onSubmitPop}>의견제안</button>
       {submitPop &&
         <div className={style.bg_box} onClick={closeSubmitPop}></div>
       }
@@ -196,16 +233,18 @@ function ViewCon({uid}) {
             name="title"
             rules={[{ required: true, message: "제목은 필수입니다." }]}
           >
-            <Input placeholder="제목" />
+            <Input placeholder="제목" maxLength={30} />
           </Form.Item>
+          {roomData && roomData.add.includes('link') &&
           <Form.Item
             className={form.item}
             name="link"
           >
-            <Input placeholder="링크주소" />
+            <Input placeholder="링크주소" maxLength={50} />
           </Form.Item>
+          }
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
-            Submit
+            제안하기
           </Button>
         </Form>
       </div>

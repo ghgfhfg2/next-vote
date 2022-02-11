@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Top from "@component/Top";
-import "styles/globals.css";
+import "styles/App.css";
 import "antd/dist/antd.css";
 import wrapper from "@redux/store/configureStore";
 import { useDispatch } from "react-redux";
@@ -12,7 +12,7 @@ import Loading from "../src/component/Loading";
 
 function App({ Component, pageProps }) {
   const dispatch = useDispatch();
-  const router = useRouter();
+  const router = useRouter();  
   const [authCheck, setAuthCheck] = useState(true);
   const [isLoading, setisLoading] = useState(true)
   auth.onAuthStateChanged((user) => {
@@ -28,7 +28,9 @@ function App({ Component, pageProps }) {
   }
   return (
     <>
-      <Top />
+      {router.route.includes('view') ||      
+        <Top />
+      }
       <div id="content">  
         {isLoading && 
           <Loading />

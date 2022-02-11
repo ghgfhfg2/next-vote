@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { useSelector } from "react-redux";
 import { useRouter } from 'next/router';
 import { db } from "src/firebase";
-import { ref, onValue, off } from "firebase/database";
+import { ref, onValue, off, runTransaction } from "firebase/database";
 import { Input, message } from "antd";
-import ViewCon from "@component/ViewCon"
+import ViewCon from "@component/ViewCon";
 const { Search } = Input;
 
 
 export default function View() {
+  const userInfo = useSelector((state) => state.user.currentUser);
   const router = useRouter();
   const uid = router.query.id
 
@@ -20,7 +22,16 @@ export default function View() {
         ...data.val(),
         uid
       })
+    });
+
+    runTransaction(listRef, pre => {
+      console.log(pre);
+      return;
+      return {...pre,
+        join_uid: pre.join_uid ? [...pre.join_uid,userInfo.uid] : [userInfo.uid]
+      }
     })
+
     return () => {
       off(listRef)
     };

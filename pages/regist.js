@@ -1,22 +1,32 @@
-import React from "react";
-import { Form, Input, Button, Checkbox, Radio, InputNumber } from "antd";
+import React, {useState} from "react";
+import { Form, Input, Button, Checkbox, Radio, Slider,Col, Row } from "antd";
 import { db } from "src/firebase";
 import { ref, set } from "firebase/database";
-import uuid from "react-uuid"
-import { getFormatDate } from "@component/CommonFunc"
+import uuid from "react-uuid";
+import { getFormatDate } from "@component/CommonFunc";
+import {useRouter} from 'next/router'
 
 function regist() {
+  const router = useRouter();
+
   const onFinish = (values) => {
     const date = getFormatDate(new Date());
     const uid = uuid();
     set(ref(db,`list/${uid}`),{
       ...values,
       date
-    })
+    });
+    router.push(`/view/${uid}`);
   };
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };
+
+  const [sliderNum, setSliderNum] = useState(3)
+  const onSlider = (e) => {
+    console.log(e)
+    setSliderNum(e)
+  }
   return (
     <>
       <div className="content_box">
@@ -27,18 +37,21 @@ function regist() {
           initialValues={{ 
             type: 1 ,
             voter: 1,
-            password: ''
+            password: '',
+            max_vote: 1,
+            limit:3
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}
           autoComplete="off"
+          className="write_form"
         >
           <Form.Item
             label="제목"
             name="title"
             rules={[{ required: true, message: "제목은 필수입니다." }]}
           >
-            <Input />
+            <Input maxLength={30} />
           </Form.Item>
           <Form.Item
             label="추가"
@@ -59,10 +72,33 @@ function regist() {
             </Radio.Group>
           </Form.Item>
           <Form.Item
-            label="의견제안 가능횟수(최대5회)"
+            label="의견제안 가능횟수"
             name="max_vote"
           >
-            <InputNumber min={1} max={5} />
+            <Radio.Group>
+              <Radio.Button value={1}>1회</Radio.Button>
+              <Radio.Button value={2}>2회</Radio.Button>
+              <Radio.Button value={3}>3회</Radio.Button>
+              <Radio.Button value={4}>4회</Radio.Button>
+              <Radio.Button value={5}>5회</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            label="인원제한"
+            name="limit"
+          >
+            <Row>
+            <Col span={22}>
+              <Slider
+                min={3}
+                max={10}
+                onChange={onSlider}
+              />
+            </Col>
+            <Col span={2} className="flex_center">
+            {sliderNum}
+            </Col>
+            </Row>
           </Form.Item>
           <Form.Item
             label="투표자공개"
@@ -74,14 +110,14 @@ function regist() {
             </Radio.Group>
           </Form.Item>
           <Form.Item
-            label="비밀방"
+            label="비밀번호"
             name="password"
           >
-            <Input placeholder="암호가 없으면 공개방으로 생성됩니다." />
+            <Input placeholder="암호가 없으면 공개방으로 생성됩니다." maxLength={15} />
           </Form.Item>
           <div style={{ display: "flex", justifyContent: "center" }}>
-            <Button type="primary" htmlType="submit" style={{ width: "50%" }}>
-              Submit
+            <Button size="large" type="primary" htmlType="submit" style={{ width: "100%",marginTop:"1rem" }}>
+              방 생성하기
             </Button>
           </div>
         </Form>

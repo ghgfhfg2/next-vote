@@ -4,11 +4,10 @@
   width: 100%;
 }
 .ranking_box{
-  width: 100%;
-  background-color: #f1f1f1;
+  width: 100%;  
   z-index: 10;
   position: sticky;
-  top:50px;
+  top:0;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
 }
 
@@ -17,6 +16,7 @@
   z-index: 10;
   position: relative;
   padding: 1rem 0.5rem;
+  border-top: 1px solid #ddd;
   overflow: auto hidden;
   margin-bottom: 0;
   @include flex();
@@ -26,10 +26,11 @@
     min-width: 25%;
     border:1px solid #ddd;
     box-shadow: 0 0 4px rgba(0,0,0,0.2);
-    margin: 0 0.5rem;
+    margin: 0 0.25rem;
     flex-shrink: 0;
     position: relative;
     padding-left: 30px;
+    border-radius: 1rem;
     .rank{
       width: 30px;height: 100%;
       border-right: 1px solid #ddd;
@@ -70,9 +71,11 @@
   }
   .con{
     flex:1;
+    background-color: #fff;
     @include flex($j:space-between);
     padding:1rem;    
     border:1px solid #ddd;
+    border-radius: 1rem;
     box-shadow: 0 0 4px rgba(0,0,0,0.2);    
   }
 }
@@ -107,4 +110,40 @@
   width: 100%;height: 40px;background-color: $p-color;
   border:none;color:#fff;
   position: fixed;bottom: 0;left:0;
+}
+
+.desc{
+  margin-right: 1rem;
+  @include flex($d:column,$a:flex-start);
+}
+.vote_link{margin-top: 5px;}
+.room_data{
+  @include flex()
+}
+.room_left{
+  @include flex($d:column,$a:flex-start);
+  flex-wrap: wrap;
+  background-color: #fff;
+  padding:0.6rem 1rem;
+  h2{text-align: left;font-size: 16px;margin-right: 15px;margin-bottom: 0;font-weight: 700;line-height: 1.4;}
+}
+.room_info{
+  font-size: 11px;
+  flex-shrink: 0;
+  color: #888;
+  @include flex();
+  margin-bottom: 5px;
+  li{margin-right: 5px;
+    border-radius: 5px;
+    border:1px solid #ddd;
+    padding:5px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+}
+.room_out{margin-left: auto;margin-right: 0.6rem;
+  border:none;background:none;
+  padding:none;
+  @include flex($j:center);
+  svg{font-size: 22px;}
 }

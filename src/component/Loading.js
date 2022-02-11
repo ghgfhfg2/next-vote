@@ -4,7 +4,9 @@ import { Spin } from 'antd';
 function Loading() {
   return (
     <>
-      <Spin />
+      <div className="loading_box">
+        <Spin />
+      </div>
     </>
   )
 }

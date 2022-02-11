@@ -1,9 +1,32 @@
 @import "scss-common.scss";
 
 .list {
+  line-height: 1.4;
+  margin-bottom: 0;
   @include grid($col: repeat(1, 1fr), $gap: 1rem 1rem);
   li {
     border-radius: 0.3rem;
     box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.25);
+  }
+  dl,dd{margin-bottom: 0;}
+  dl{
+    @include flex();
+  }
+  dt{padding:1rem;
+    @include flex($d:column,$a:flex-start);
+    .limit{
+      @include flex();
+      margin-top: 7px;
+      font-size: 12px;
+      svg{font-size: 14px;margin-right: 5px;position: relative;top:1px}
+    }
+  }
+  dd{border-left: 1px solid #ddd;
+    margin-left: auto;
+  }
+  button{border:none;background:none;
+    @include flex($j:center);
+    padding:1rem;
+    svg{font-size: 20px;}
   }
 }

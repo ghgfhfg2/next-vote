@@ -1,3 +1,7 @@
+@import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");
+.com-tab-box .tab-content {
+  display: none; }
+
 html,
 body,
 div,
@@ -137,3 +141,20 @@ table {
 
 .write_form .ant-form-item .ant-form-item-label {
   padding-bottom: 0; }
+
+.loading_box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 10; }
+
+.flex_center {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important; }

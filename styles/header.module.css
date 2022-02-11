@@ -16,6 +16,7 @@
   flex-direction: row; }
 
 .header .btn-menu {
+  cursor: pointer;
   padding: 0;
   border: none;
   background: none; }
