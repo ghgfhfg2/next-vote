@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
 import { Form , Input, Button, message } from "antd";
 import { db } from "src/firebase";
-import { get, ref, set, onValue, off, runTransaction, update } from "firebase/database";
+import { get, ref, set, onValue, off, runTransaction, update, remove } from "firebase/database";
 import { getFormatDate } from "@component/CommonFunc";
 import uuid from "react-uuid"
 import style from "styles/view.module.css";
@@ -139,6 +139,11 @@ function ViewCon({uid}) {
   }
 
   const onOutView = () => {
+    get(ref(db,`list/${uid}/join_uid`))
+    .then(data=>{
+      const idx = data.val().indexOf(userInfo.uid)
+      remove(ref(db,`list/${uid}/join_uid/${idx}`))
+    })
     router.push('/')
   }
 
@@ -235,7 +240,7 @@ function ViewCon({uid}) {
           >
             <Input placeholder="제목" maxLength={30} />
           </Form.Item>
-          {roomData && roomData.add.includes('link') &&
+          {roomData && roomData.add && roomData.add.includes('link') &&
           <Form.Item
             className={form.item}
             name="link"

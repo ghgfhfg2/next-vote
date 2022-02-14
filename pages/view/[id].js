@@ -16,7 +16,8 @@ export default function View() {
   const [roomData, setRoomData] = useState();
   const [pwEnter, setPwEnter] = useState(true);
   useEffect(() => {
-    const listRef = ref(db, `list/${uid}`)
+    console.log(uid)
+    const listRef = ref(db, `list/${uid}/`)
     onValue(listRef, data=>{
       setRoomData({
         ...data.val(),
@@ -24,11 +25,11 @@ export default function View() {
       })
     });
 
-    runTransaction(listRef, pre => {
-      console.log(pre);
-      return;
-      return {...pre,
-        join_uid: pre.join_uid ? [...pre.join_uid,userInfo.uid] : [userInfo.uid]
+    runTransaction(ref(db, `list/${uid}/join_uid`), pre => {
+      if(pre && pre.includes(userInfo.uid)){
+        return pre
+      }else{
+        return pre ? [...pre,userInfo.uid] : [userInfo.uid]
       }
     })
 

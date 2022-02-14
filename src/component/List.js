@@ -13,11 +13,13 @@ function List() {
     onValue(listRef, data=>{
       let listArr = [];
       data.forEach(el=>{
+        console.log(el.val())
         listArr.push({
           ...el.val(),
           uid:el.key
         })
       })
+      console.log(listArr)
       setListData(listArr)
     });
     return () => {
@@ -36,7 +38,7 @@ function List() {
                 <dl>
                   <dt>
                     <span className={style.tit}>{el.title}</span>
-                    <span className={style.limit}><bsIcon.BsPerson />1/3</span>
+                    <span className={style.limit}><bsIcon.BsPerson />{el.join_uid ? el.join_uid.length : '0'}/{el.limit}</span>
                   </dt>
                   <dd>
                     <Link href={`/view/${el.uid}`}>
