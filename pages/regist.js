@@ -24,7 +24,6 @@ function regist() {
 
   const [sliderNum, setSliderNum] = useState(3)
   const onSlider = (e) => {
-    console.log(e)
     setSliderNum(e)
   }
   return (
@@ -39,7 +38,8 @@ function regist() {
             voter: 1,
             password: '',
             max_vote: 1,
-            limit:3
+            limit:3,
+            add:''
           }}
           onFinish={onFinish}
           onFinishFailed={onFinishFailed}

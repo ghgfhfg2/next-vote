@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { useRouter } from 'next/router';
 import { db } from "src/firebase";
-import { ref, onValue, off, runTransaction } from "firebase/database";
+import { ref, onValue, off, runTransaction, update } from "firebase/database";
 import { Input, message } from "antd";
 import ViewCon from "@component/ViewCon";
 const { Search } = Input;
@@ -25,12 +25,11 @@ export default function View() {
       })
     });
 
-    runTransaction(ref(db, `list/${uid}/join_uid`), pre => {
-      if(pre && pre.includes(userInfo.uid)){
-        return pre
-      }else{
-        return pre ? [...pre,userInfo.uid] : [userInfo.uid]
-      }
+    update(ref(db, `list/${uid}/join_uid/${userInfo.uid}`), {
+      enter:true
+    })
+    runTransaction(ref(db, `list/${uid}/join_count`), pre => {
+      return pre ? pre+1 : 1;
     })
 
     return () => {

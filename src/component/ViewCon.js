@@ -93,7 +93,7 @@ function ViewCon({uid}) {
     }
     set(ref(db,`vote_list/${uid}/${uid_}`),{
       ...val
-    })    
+    });
   }
 
   const onVote = (uid_,user_uid) => {
@@ -107,10 +107,10 @@ function ViewCon({uid}) {
     }
     update(ref(db,`vote_list/${uid}/${uid_}`),{
       user_uid: [...user_uid,userInfo.uid]
-    })  
+    });
     runTransaction(ref(db,`vote_list/${uid}/${uid_}/vote_count`),pre => {
       return pre ? ++pre : 1;
-    })
+    });
 
     runTransaction(ref(db,`list/${uid}/${userInfo.uid}`), pre => {
       let res = {
@@ -118,7 +118,7 @@ function ViewCon({uid}) {
         vote_count : pre && pre.vote_count ? pre.vote_count+1 : 1,
       }
       return res;
-    })
+    });
   }
 
   const submitBox = useRef()
@@ -131,7 +131,8 @@ function ViewCon({uid}) {
     setsubmitPop(false);
     submitBox.current.style.transform = 'translateY(100%)'
     formRef.current.setFieldsValue({
-      title:undefined
+      title:'',
+      link:''
     });
     setTimeout(()=>{
       scrollToBottom();
@@ -139,10 +140,11 @@ function ViewCon({uid}) {
   }
 
   const onOutView = () => {
-    get(ref(db,`list/${uid}/join_uid`))
-    .then(data=>{
-      const idx = data.val().indexOf(userInfo.uid)
-      remove(ref(db,`list/${uid}/join_uid/${idx}`))
+    update(ref(db, `list/${uid}/join_uid/${userInfo.uid}`), {
+      enter:false
+    })
+    runTransaction(ref(db, `list/${uid}/join_count`), pre => {
+      return pre - 1;
     })
     router.push('/')
   }
