@@ -158,3 +158,116 @@ table {
   display: flex !important;
   justify-content: center !important;
   align-items: center !important; }
+
+.pw_box {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; }
+
+.pw_box .back {
+  margin-top: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
+
+.pw_box .back svg {
+  margin-right: 5px; }
+
+.btn_write {
+  position: fixed;
+  right: 1rem;
+  bottom: 80px;
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  background-color: #1890ff;
+  border: none;
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); }
+
+.btn_write svg {
+  font-size: 24px;
+  color: #fff; }
+
+.empty_box {
+  width: 100%;
+  height: 60px; }
+
+footer.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 10;
+  width: 100%;
+  height: 60px;
+  box-shadow: 0 -1px 2px rgba(0, 0, 0, 0.2);
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
+
+footer.footer span {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column; }
+
+.mypage_box .profile_box {
+  padding: 1rem;
+  border-bottom: 10px solid #f1f1f1; }
+
+.mypage_box .profile_box .profile {
+  font-size: 13px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
+
+.mypage_box .profile_box .profile .name {
+  font-weight: 700; }
+
+.mypage_box .profile_box .profile .btn_logout {
+  border: none;
+  background: none;
+  margin-left: auto; }
+
+.mypage_box .my_list {
+  padding: 1rem;
+  margin-bottom: 0; }
+
+.mypage_box .my_list dt.tit {
+  margin-bottom: 10px;
+  font-weight: 700; }
+
+.search_radio {
+  width: 100%;
+  display: flex !important;
+  margin-bottom: 10px !important; }
+
+.search_radio label {
+  flex: 1;
+  text-align: center; }
+
+.ani_shake {
+  animation: 'ani_shake' 0.3s both; }
+
+@keyframes ani_shake {
+  from {
+    transform: translateX(0); }
+  25% {
+    transform: translateX(-7px); }
+  50% {
+    transform: translateX(5px); }
+  75% {
+    transform: translateX(-3px); }
+  100% {
+    transform: translateX(0); } }

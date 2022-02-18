@@ -151,3 +151,91 @@ table {
   justify-content: center !important;
   align-items: center !important;
 }
+.pw_box{
+  width: 100%;height: 100vh;
+  @include flex($d:column,$j:center);
+  .back{margin-top: 10px;
+    @include flex();
+    svg{margin-right: 5px;}
+  }
+}
+
+.btn_write{position: fixed;
+  right: 1rem;
+  bottom: 80px;width:45px;height: 45px;
+  border-radius: 50%;background-color: $p-color;
+  border:none;
+  z-index: 100;
+  @include flex($j:center);
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+  svg{font-size: 24px;color:#fff}
+
+}
+
+.empty_box{
+  width: 100%;height: 60px;
+}
+footer.footer{
+  position: fixed;
+  bottom: 0;left: 0;
+  z-index: 10;
+  width: 100%;height: 60px;
+  box-shadow: 0 -1px 2px rgba(0,0,0,0.2);
+  @include flex();
+  span{
+    flex:1;
+    @include flex($d:column);
+  }
+}
+
+
+//mypage
+.mypage_box{
+  .profile_box{padding:1rem;
+    border-bottom: 10px solid #f1f1f1;
+    .profile{
+      font-size: 13px;
+      @include flex();
+      .name{font-weight: 700;}
+      .btn_logout{border:none;background: none;margin-left: auto;}
+    }
+  }
+  .my_list{
+    padding:1rem;
+    margin-bottom: 0;
+    dt.tit{margin-bottom: 10px;font-weight: 700;}
+    dd{}
+  }
+}
+
+
+//search
+.search_radio{
+  width: 100%;
+  display: flex !important;
+  margin-bottom: 10px !important;
+  label{flex:1;text-align: center;}
+}
+
+
+//animation
+.ani_shake{
+  animation: 'ani_shake' 0.3s both;
+}
+@keyframes ani_shake {
+  from{
+    transform: translateX(0);
+  }
+  25%{
+    transform: translateX(-7px);
+  }
+  50%{
+    transform: translateX(5px);
+  }
+  75%{
+    transform: translateX(-3px);
+  }
+  100%{
+    transform: translateX(0);
+  }
+}

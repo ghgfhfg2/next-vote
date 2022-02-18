@@ -1,20 +1,30 @@
 import React, {useState} from "react";
-import { Form, Input, Button, Checkbox, Radio, Slider,Col, Row } from "antd";
+import { useSelector } from "react-redux";
+import { Form, Input, Button, Checkbox, Radio } from "antd";
 import { db } from "src/firebase";
-import { ref, set } from "firebase/database";
+import { ref, set, runTransaction } from "firebase/database";
 import uuid from "react-uuid";
 import { getFormatDate } from "@component/CommonFunc";
 import {useRouter} from 'next/router'
 
-function regist() {
+function Regist() {
   const router = useRouter();
+  const userInfo = useSelector((state) => state.user.currentUser);
 
   const onFinish = (values) => {
     const date = getFormatDate(new Date());
     const uid = uuid();
+    runTransaction(ref(db,`user/${userInfo.uid}`), pre => {
+      let res = pre ? pre : {room:[],ing:0};
+      res.room = [...res.room, uid]
+      res.ing = res.ing+1;
+      return res;
+    });
     set(ref(db,`list/${uid}`),{
       ...values,
-      date
+      date,
+      ing: true,
+      host: userInfo.uid
     });
     router.push(`/view/${uid}`);
   };
@@ -38,7 +48,6 @@ function regist() {
             voter: 1,
             password: '',
             max_vote: 1,
-            limit:3,
             add:''
           }}
           onFinish={onFinish}
@@ -84,23 +93,6 @@ function regist() {
             </Radio.Group>
           </Form.Item>
           <Form.Item
-            label="인원제한"
-            name="limit"
-          >
-            <Row>
-            <Col span={22}>
-              <Slider
-                min={3}
-                max={10}
-                onChange={onSlider}
-              />
-            </Col>
-            <Col span={2} className="flex_center">
-            {sliderNum}
-            </Col>
-            </Row>
-          </Form.Item>
-          <Form.Item
             label="투표자공개"
             name="voter"
           >
@@ -126,4 +118,4 @@ function regist() {
   );
 }
 
-export default regist;
+export default Regist;

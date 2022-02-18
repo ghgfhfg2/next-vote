@@ -9,11 +9,14 @@ import style from "styles/view.module.css";
 import form from "styles/form.module.css";
 import { AiOutlineLike } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
+import { IoIosArrowUp,IoIosArrowDown } from "react-icons/io";
+import { BiTargetLock } from "react-icons/bi";
 import {useRouter} from 'next/router';
 
 
 function ViewCon({uid}) {
   const formRef = useRef();
+  const listRef = useRef([]);
   const router = useRouter();
   
   const userInfo = useSelector((state) => state.user.currentUser);
@@ -76,6 +79,9 @@ function ViewCon({uid}) {
           ...pre,
           submit_count : pre && pre.submit_count ? pre.submit_count+1 : 1,
         }
+        setTimeout(()=>{
+          scrollToBottom();
+        },10)
         return res;
       }
     })
@@ -133,20 +139,42 @@ function ViewCon({uid}) {
     formRef.current.setFieldsValue({
       title:'',
       link:''
-    });
-    setTimeout(()=>{
-      scrollToBottom();
-    },10)
+    });    
   }
 
   const onOutView = () => {
-    update(ref(db, `list/${uid}/join_uid/${userInfo.uid}`), {
-      enter:false
+    router.back()
+  }
+
+  const onVoteFinish = () => {
+    runTransaction(ref(db,`user/${userInfo.uid}`), pre => {
+      let res = pre;
+      res.ing = res.ing -1;
+      res.finish = res.finish ? res.finish + 1 : 1;
+      return res;
     })
-    runTransaction(ref(db, `list/${uid}/join_count`), pre => {
-      return pre - 1;
+    runTransaction(ref(db,`list/${uid}/ing`), pre => {
+      return false;
     })
+    
     router.push('/')
+  }
+
+  const onMoveList = (uid) => {
+    listRef.current.map(el=>{
+      if(el.dataset.uid === uid){
+        el.scrollIntoView({ behavior: 'smooth', block: "center" });
+        el.classList.add('ani_shake');
+        setTimeout(() => {
+          el.classList.remove('ani_shake')
+        }, 500);
+      }
+    })
+  }
+  
+  const [rankView, setrankView] = useState(false)
+  const toggleRanking = () => {
+    setrankView(!rankView);
   }
 
   return <>
@@ -170,35 +198,38 @@ function ViewCon({uid}) {
           </button>
         </div>
         }
-        {voteListData && voteListData.length > 0 && 
+        {voteListData && voteListData.length > 0 && rankView &&
         <ul className={style.ranking}>
           {ranking.map((el,idx)=>(
-            <li key={idx}>
+            <li key={idx} onClick={()=>onMoveList(el.uid)}>
               <span className={style.rank}>{idx+1}</span>
               <div className={style.rank_con}>
                 <div className={style.desc}>
                   <span className={style.vote_tit}>{el.title}</span>
-                  {el.link &&
-                  <span className={style.vote_link}>
-                    <a href={el.link} target="_blank">{el.link}</a>
-                  </span>
-                  }
-                </div>
-                <div className={style.btn_box}>
-                  <span className={style.count}>
-                    {el.vote_count > 0 ? <>{el.vote_count}</> : `0`}
-                  </span>
-                  <Button className={style.btn_vote} onClick={()=>{onVote(el.uid,el.user_uid)}}><AiOutlineLike className={style.ic_vote} /></Button>
-                </div>
+                </div>                
+              </div>
+              <div  className={style.ic_target}>
+                <BiTargetLock style={{marginRight:"4px",fontSize:"13px"}} />이동
               </div>
             </li>
           ))}
         </ul>
         }
+        <button type="button" className={style.btn_fold} onClick={toggleRanking}>
+        {rankView ? (
+          <><IoIosArrowUp />랭킹숨기기</>
+        ):(
+          <><IoIosArrowDown />랭킹보기</>
+        )}
+        </button>
       </div>
       <ul className={style.vote_list}>
         {voteListData && voteListData.map((el,idx)=>(
-          <li key={idx}>
+          <li
+           key={idx}
+           ref={list=>listRef.current[idx] = list}
+           data-uid={el.uid}
+          >
             <div className={style.profile}>
               <span>{el.user_name}</span>
               <span className={style.date}>{`${el.date.hour}:${el.date.min}`}</span>
@@ -212,18 +243,32 @@ function ViewCon({uid}) {
                 </span>
                 }
               </div>
+              {roomData && roomData.ing &&
               <div className={style.btn_box}>
                 <span className={style.count}>
                   {el.vote_count > 0 ? <>{el.vote_count}</> : `0`}
                 </span>
                 <Button className={style.btn_vote} onClick={()=>{onVote(el.uid,el.user_uid)}}><AiOutlineLike className={style.ic_vote} /></Button>
               </div>
+              }
             </div>
           </li>
         ))}
       </ul>
       <div className={style.empty}></div>
-      <button type="button" className={style.btn_open} onClick={onSubmitPop}>의견제안</button>
+      {roomData && roomData.ing ? (
+        <div className={style.btn_open_box}>
+        <button type="button" className={style.btn_open} onClick={onSubmitPop}>의견제안</button>
+        {roomData && roomData.host === userInfo.uid &&
+          <button type="button" className={style.btn_finish} onClick={onVoteFinish}>투표종료</button>
+        }
+        </div>
+      ) : (
+        <div className={style.btn_open_box}>
+          <div className={style.finish_txt}>투표가 종료되었습니다</div>
+        </div>
+      )}
+      
       {submitPop &&
         <div className={style.bg_box} onClick={closeSubmitPop}></div>
       }

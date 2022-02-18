@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from "react";
-import style from "styles/list.module.css";
 import { db } from "src/firebase";
 import { ref, onValue, off } from "firebase/database";
 import Link from "next/link";
-import * as ioIcon from 'react-icons/io5'; 
-import * as bsIcon from 'react-icons/bs';
+import {MdOutlinePlaylistAdd} from "react-icons/md"
+import ListUl from "./ListUl";
 
 function List() {
   const [listData, setListData] = useState();
@@ -28,26 +27,14 @@ function List() {
   
   return (
     <>
-      <div className="content_box">
-        <ul className={style.list}>
-          {listData &&
-            listData.map((el, idx) => (
-              <li key={idx}>
-                <dl>
-                  <dt>
-                    <span className={style.tit}>{el.title}</span>
-                    <span className={style.limit}><bsIcon.BsPerson />{el.join_count}/{el.limit}</span>
-                  </dt>
-                  <dd>
-                    <Link href={`/view/${el.uid}`}>
-                      <button type="button"><ioIcon.IoEnterOutline /></button>
-                    </Link>
-                  </dd>
-                </dl>
-              </li>
-            ))}
-        </ul>
+      <div className="content_box list_content_box">
+        {listData && <ListUl listData={listData} />}
       </div>
+      <Link href="/regist">
+        <button type="button" className="btn_write">
+          <MdOutlinePlaylistAdd />
+        </button>
+      </Link>
     </>
   );
 }

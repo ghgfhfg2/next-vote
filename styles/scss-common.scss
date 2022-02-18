@@ -50,14 +50,14 @@ $bd-color: #e2e2e2; //보더컬러
   color: $c;
 }
 
-@mixin lastMr0($margin) {
-  margin-right: $margin;
+@mixin lastMr0($mg) {
+  margin-right: $mg;
   &:last-child {
     margin-right: 0;
   }
 }
-@mixin lastMb0($margin) {
-  margin-bottom: $margin;
+@mixin lastMb0($mg) {
+  margin-bottom: $mg;
   &:last-child {
     margin-bottom: 0;
   }

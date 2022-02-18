@@ -10,6 +10,7 @@ import { setUser, clearUser } from "@redux/actions/user_action";
 
 function TotalMenu({ visible, onCloseMenu }) {
   const userInfo = useSelector((state) => state.user.currentUser);
+  const dispatch = useDispatch();
 
   //로그인
   const googleHandler = async () => {

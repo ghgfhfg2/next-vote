@@ -3,8 +3,9 @@ import { useSelector } from "react-redux";
 import { useRouter } from 'next/router';
 import { db } from "src/firebase";
 import { ref, onValue, off, runTransaction, update } from "firebase/database";
-import { Input, message } from "antd";
+import { Input, message, Button } from "antd";
 import ViewCon from "@component/ViewCon";
+import { RiArrowGoBackLine } from "react-icons/ri"
 const { Search } = Input;
 
 
@@ -16,7 +17,6 @@ export default function View() {
   const [roomData, setRoomData] = useState();
   const [pwEnter, setPwEnter] = useState(true);
   useEffect(() => {
-    console.log(uid)
     const listRef = ref(db, `list/${uid}/`)
     onValue(listRef, data=>{
       setRoomData({
@@ -25,9 +25,6 @@ export default function View() {
       })
     });
 
-    update(ref(db, `list/${uid}/join_uid/${userInfo.uid}`), {
-      enter:true
-    })
     runTransaction(ref(db, `list/${uid}/join_count`), pre => {
       return pre ? pre+1 : 1;
     })
@@ -46,6 +43,10 @@ export default function View() {
       message.error('암호가 틀렸습니다.');
     }
   }
+
+  const onBack = () => {
+    router.back()
+  }
   
   return (
     <>
@@ -53,12 +54,13 @@ export default function View() {
         <>
         {roomData.password && pwEnter ? (
           <>
-            <div className="content_box">
+            <div className="content_box pw_box">
               <Search
               placeholder="암호를 입력하세요" 
               onSearch={onSearch} 
               enterButton 
               />
+              <Button className="back" onClick={onBack}><RiArrowGoBackLine />돌아가기</Button>
             </div>
           </>
           ):(
