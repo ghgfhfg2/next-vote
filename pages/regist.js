@@ -15,16 +15,16 @@ function Regist() {
     const date = getFormatDate(new Date());
     const uid = uuid();
     runTransaction(ref(db,`user/${userInfo.uid}`), pre => {
-      let res = pre ? pre : {room:[],ing:0};
+      let res = pre ? pre : {room:[]};
       res.room = [...res.room, uid]
-      res.ing = res.ing+1;
       return res;
     });
     set(ref(db,`list/${uid}`),{
       ...values,
       date,
       ing: true,
-      host: userInfo.uid
+      host: userInfo.uid,
+      vote_user:''
     });
     router.push(`/view/${uid}`);
   };
@@ -41,8 +41,8 @@ function Regist() {
       <div className="content_box">
         <Form
           name="basic"
-          labelCol={{ span: 4 }}
-          wrapperCol={{ span: 20 }}
+          labelCol={{ span: 7 }}
+          wrapperCol={{ span: 17 }}
           initialValues={{ 
             type: 1 ,
             voter: 1,

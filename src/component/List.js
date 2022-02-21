@@ -17,6 +17,9 @@ function List() {
           uid:el.key
         })
       })
+      listArr.sort((a,b)=>{
+        return b.date.timestamp - a.date.timestamp;
+      })
       setListData(listArr)
     });
     return () => {
@@ -30,11 +33,11 @@ function List() {
       <div className="content_box list_content_box">
         {listData && <ListUl listData={listData} />}
       </div>
-      <Link href="/regist">
+      {/* <Link href="/regist">
         <button type="button" className="btn_write">
           <MdOutlinePlaylistAdd />
         </button>
-      </Link>
+      </Link> */}
     </>
   );
 }

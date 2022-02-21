@@ -107,7 +107,7 @@ function ViewCon({uid}) {
       message.error('이미 투표한 의견입니다.');
       return
     }
-    if(roomData.type === 1 && roomData[userInfo.uid] && roomData[userInfo.uid].vote_count >= 1){
+    if(roomData.type === 1 && roomData.vote_user && roomData.vote_user[userInfo.uid] && roomData.vote_user[userInfo.uid].vote_count >= 1){
       message.error('단일투표 입니다.');
       return;
     }
@@ -118,7 +118,7 @@ function ViewCon({uid}) {
       return pre ? ++pre : 1;
     });
 
-    runTransaction(ref(db,`list/${uid}/${userInfo.uid}`), pre => {
+    runTransaction(ref(db,`list/${uid}/vote_user/${userInfo.uid}`), pre => {
       let res = {
         ...pre,
         vote_count : pre && pre.vote_count ? pre.vote_count+1 : 1,
@@ -131,11 +131,11 @@ function ViewCon({uid}) {
   const [submitPop, setsubmitPop] = useState(false);
   const onSubmitPop = () => {
     setsubmitPop(true);
-    submitBox.current.style.transform = 'translateY(0)'
+    submitBox.current.style.transform = 'translate(-50%,0)'
   }
   const closeSubmitPop = () => {
     setsubmitPop(false);
-    submitBox.current.style.transform = 'translateY(100%)'
+    submitBox.current.style.transform = 'translate(-50%,100%)'
     formRef.current.setFieldsValue({
       title:'',
       link:''
@@ -147,17 +147,10 @@ function ViewCon({uid}) {
   }
 
   const onVoteFinish = () => {
-    runTransaction(ref(db,`user/${userInfo.uid}`), pre => {
-      let res = pre;
-      res.ing = res.ing -1;
-      res.finish = res.finish ? res.finish + 1 : 1;
-      return res;
-    })
     runTransaction(ref(db,`list/${uid}/ing`), pre => {
       return false;
     })
-    
-    router.push('/')
+    message.success('투표가 종료되었습니다.')
   }
 
   const onMoveList = (uid) => {

@@ -5,7 +5,7 @@ import { signOut } from "firebase/auth";
 import { clearUser } from "@redux/actions/user_action";
 import {useRouter} from 'next/router';
 import { db } from "src/firebase";
-import { ref, onValue, remove, get } from "firebase/database";
+import { ref, onValue, remove, get, off } from "firebase/database";
 import ListUl from "../src/component/ListUl";
 
 function Mypage() {
@@ -14,18 +14,33 @@ function Mypage() {
   const router = useRouter();
 
   const [listData, setListData] = useState();
-  const listRef = ref(db, `list`);
   useEffect(() => {
+    const listRef = ref(db, `list`);
     onValue(listRef, data=>{
       let listArr = [];
       data.forEach(el=>{
-        if(el.val().host === userInfo.uid) listArr.push({...el.val(),uid:el.key})
+        el.val().vote_user && console.log(el.val().vote_user.forEach)
+        /*
+        let vote_check = false;
+        el.val().vote_user && el.val().vote_user.forEach(user => {
+          console.log(user)
+          if(user === userInfo.uid) vote_check = true;
+        })
+        if(el.val().host === userInfo.uid || vote_check) listArr.push({...el.val(),uid:el.key})
+        */
       })
       setListData(listArr)
     });
+    return () => {
+      off(listRef)
+    };
   }, [])
   
-  const onDel = (uid) => {
+  const onDel = async (uid) => {
+    let roomId = await get(ref(db,`user/${userInfo.uid}/room`))
+    .then(data => data.val() && data.val().indexOf(`${uid}`))
+    roomId && remove(ref(db,`user/${userInfo.uid}/room/${roomId}`))
+    
     get(ref(db,`vote_list/${uid}`))
     .then(data=>{
       if(data.val()){
@@ -58,8 +73,9 @@ function Mypage() {
           <button type='button' className='btn_logout' onClick={googleSignOut}>로그아웃</button>
         </div>
       </div>
+      
       <dl className='my_list'>
-        <dt className='tit'>내가 만든 방</dt>
+        <dt className='tit'>참여중인 방</dt>
         <dd>
           {listData && <ListUl router={router} listData={listData} onDel={onDel} />}
         </dd>

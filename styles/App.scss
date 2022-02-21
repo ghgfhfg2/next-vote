@@ -120,7 +120,10 @@ q:after {
   content: "";
   content: none; }
 
-table {
+  html{background-color: #f9f9f9;}
+  body{max-width: 500px;margin:0 auto !important;background-color: #fff;}
+
+  table {
   border-collapse: collapse;
   border-spacing: 0; }
 
@@ -133,6 +136,7 @@ table {
 
 .content_box {
   padding: 1rem; }
+
 
 .write_form .ant-form-item {
   margin-bottom: 10px; }
@@ -161,8 +165,9 @@ table {
 }
 
 .btn_write{position: fixed;
-  right: 1rem;
+  left:50%;
   bottom: 80px;width:45px;height: 45px;
+  transform: translateX(100px);
   border-radius: 50%;background-color: $p-color;
   border:none;
   z-index: 100;
@@ -176,14 +181,19 @@ table {
   width: 100%;height: 60px;
 }
 footer.footer{
+  max-width: 500px;
+  background-color: #fff;
   position: fixed;
-  bottom: 0;left: 0;
+  bottom: 0;left: 50%;
+  transform: translateX(-50%);
   z-index: 10;
   width: 100%;height: 60px;
   box-shadow: 0 -1px 2px rgba(0,0,0,0.2);
   @include flex();
   span{
     flex:1;
+    font-size: 11px;
+    svg{font-size: 17px;margin-bottom: 4px;}
     @include flex($d:column);
   }
 }
@@ -239,3 +249,6 @@ footer.footer{
     transform: translateX(0);
   }
 }
+
+
+.list_end{color: #999;background-color: #f5f5f5;}

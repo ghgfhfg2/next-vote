@@ -22,8 +22,10 @@ function App({ Component, pageProps }) {
   auth.onAuthStateChanged((user) => {
     if (user) {
       dispatch(setUser(user));
+      setAuthCheck(true)
     } else {
       dispatch(clearUser());
+      setAuthCheck(false)
     }
     setisLoading(false)
   });
