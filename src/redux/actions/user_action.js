@@ -1,4 +1,4 @@
-import { CLEAR_USER, SET_USER } from "./types";
+import { CLEAR_USER, SET_USER, NICK_CHANGE } from "./types";
 
 export const setUser = (user) => {
   return {
@@ -10,6 +10,14 @@ export const setUser = (user) => {
 export const clearUser = () => {
   return {
     type: CLEAR_USER,
+  };
+};
+
+
+export const nickChange = (nick) => {
+  return {
+    type: NICK_CHANGE,
+    payload: nick,
   };
 };
 

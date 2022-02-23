@@ -100,7 +100,10 @@
 
 .vote_list .profile {
   margin-right: 10px;
+  max-width: 70px;
+  text-align: right;
   color: #ddd;
+  flex-shrink: 0;
   display: flex;
   justify-content: flex-start;
   align-items: flex-end;
@@ -217,10 +220,16 @@
   display: flex;
   justify-content: flex-start;
   align-items: flex-start;
-  flex-direction: column; }
+  flex-direction: column;
+  flex: 1; }
 
 .vote_link {
-  margin-top: 5px; }
+  margin-top: 5px;
+  word-break: break-all;
+  line-height: 1.2; }
+
+.vote_img {
+  max-width: 100%; }
 
 .room_data {
   background-color: #fff;
@@ -267,6 +276,7 @@
 .room_out {
   margin-left: auto;
   margin-right: 0.6rem;
+  cursor: pointer;
   border: none;
   background: none;
   padding: none;
@@ -277,3 +287,52 @@
 
 .room_out svg {
   font-size: 22px; }
+
+.right_con {
+  display: flex;
+  justify-content: flex-start;
+  align-items: flex-end;
+  flex-direction: column;
+  position: relative;
+  flex-shrink: 0; }
+
+.btn_vote_list_view {
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  background: none;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  font-size: 11px; }
+
+.btn_vote_list_view svg {
+  margin-right: 4px;
+  font-size: 13px; }
+
+.btn_vote_list_view + ul {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: column;
+  position: absolute;
+  max-height: 100px;
+  overflow: auto;
+  z-index: 10;
+  background-color: #fff;
+  padding: 0.5rem 1rem;
+  bottom: -5px;
+  right: -10px;
+  transform: translateY(100%);
+  border-radius: 5px;
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2); }
+
+.btn_vote_list_view + ul li {
+  margin: 0;
+  white-space: nowrap;
+  text-align: right;
+  font-size: 11px; }
+
+.voter_list {
+  background-color: #fff; }

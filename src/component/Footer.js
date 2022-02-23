@@ -13,28 +13,28 @@ function Footer() {
     <>
       <footer className='footer'>
         <Link href="/">
-          <span>
+          <a>
           {path === '/' ? <IoIosListBox /> : <IoIosList />}
           목록
-          </span>
+          </a>
         </Link>
         <Link href="/regist">
-          <span>
+          <a>
           {path === '/regist' ? <RiFileAddFill /> : <RiFileAddLine />}
           등록
-          </span>
+          </a>
         </Link>
         <Link href="/search">
-          <span>
+          <a>
           {path === '/search' ? <RiSearchFill /> : <RiSearchLine />}
           검색
-          </span>
+          </a>
         </Link>
         <Link href="/mypage">
-          <span>
+          <a>
           {path === '/mypage' ? <RiUser3Fill /> : <RiUser3Line />}
           마이페이지
-          </span>
+          </a>
         </Link>
       </footer>
     </>

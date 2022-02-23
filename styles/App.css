@@ -130,6 +130,9 @@ body {
   margin: 0 auto !important;
   background-color: #fff; }
 
+button {
+  cursor: pointer; }
+
 table {
   border-collapse: collapse;
   border-spacing: 0; }
@@ -226,15 +229,17 @@ footer.footer {
   align-items: center;
   flex-direction: row; }
 
-footer.footer span {
+footer.footer a {
   flex: 1;
+  color: #333;
+  cursor: pointer;
   font-size: 11px;
   display: flex;
   justify-content: flex-start;
   align-items: center;
   flex-direction: column; }
 
-footer.footer span svg {
+footer.footer a svg {
   font-size: 17px;
   margin-bottom: 4px; }
 
@@ -245,17 +250,15 @@ footer.footer span svg {
 .mypage_box .profile_box .profile {
   font-size: 13px;
   display: flex;
-  justify-content: flex-start;
+  justify-content: space-between;
   align-items: center;
   flex-direction: row; }
 
 .mypage_box .profile_box .profile .name {
   font-weight: 700; }
 
-.mypage_box .profile_box .profile .btn_logout {
-  border: none;
-  background: none;
-  margin-left: auto; }
+.mypage_box .profile_box .profile .ic {
+  font-size: 17px; }
 
 .mypage_box .my_list {
   padding: 1rem;
@@ -264,6 +267,24 @@ footer.footer span svg {
 .mypage_box .my_list dt.tit {
   margin-bottom: 10px;
   font-weight: 700; }
+
+.right_menu {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
+
+.right_menu button {
+  border: none;
+  background: none; }
+
+.btn_setting {
+  font-size: 15px;
+  border: none;
+  background: none;
+  top: 3px;
+  position: relative;
+  margin-left: 3px; }
 
 .search_radio {
   width: 100%;

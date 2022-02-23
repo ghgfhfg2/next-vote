@@ -1,4 +1,4 @@
-import { SET_USER, CLEAR_USER } from "../actions/types";
+import { SET_USER, CLEAR_USER, NICK_CHANGE } from "../actions/types";
 
 const initState = {
   currentUser: null,
@@ -19,10 +19,17 @@ const user = (state = initState, action) => {
         currentUser: null,
         isLoading: false,
       };
+    case NICK_CHANGE:
+      return {
+        ...state,
+        currentUser: {...state.currentUser,displayName:action.payload},
+        isLoading: false,
+      };
     default:
       return state;
   }
 };
+
 
 
 export default user;

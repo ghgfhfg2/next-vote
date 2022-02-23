@@ -9,7 +9,7 @@ import style from "styles/view.module.css";
 import form from "styles/form.module.css";
 import { AiOutlineLike } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
-import { IoIosArrowUp,IoIosArrowDown } from "react-icons/io";
+import { IoIosArrowUp,IoIosArrowDown,IoIosList } from "react-icons/io";
 import { BiTargetLock } from "react-icons/bi";
 import {useRouter} from 'next/router';
 
@@ -17,6 +17,7 @@ import {useRouter} from 'next/router';
 function ViewCon({uid}) {
   const formRef = useRef();
   const listRef = useRef([]);
+  const voterRef = useRef([]);
   const router = useRouter();
   
   const userInfo = useSelector((state) => state.user.currentUser);
@@ -68,6 +69,7 @@ function ViewCon({uid}) {
     const linkRegex = /[\<\>\{\}\s]/g;
     values.title && values.title.replace(linkRegex,"")
     values.link = values.link ? values.link.replace(linkRegex,"") : ''
+    values.img = values.img ? values.img.replace(linkRegex,"") : ''
     runTransaction(ref(db,`list/${uid}/${userInfo.uid}`), pre => {
       if(pre && pre.submit_count && pre.submit_count >= roomData.max_vote){
         message.error(`최대 제안횟수를 초과했습니다.`);
@@ -94,7 +96,7 @@ function ViewCon({uid}) {
       ...values,
       date,
       user_name:userInfo.displayName,
-      user_uid:[userInfo.uid],
+      user_uid:[{uid:userInfo.uid,name:userInfo.displayName}],
       vote_count:1
     }
     set(ref(db,`vote_list/${uid}/${uid_}`),{
@@ -103,7 +105,11 @@ function ViewCon({uid}) {
   }
 
   const onVote = (uid_,user_uid) => {
-    if(user_uid.includes(userInfo.uid)){
+    let uidArr = [];
+    user_uid.map(user => {
+      uidArr.push(user.uid)
+    })
+    if(uidArr.includes(userInfo.uid)){
       message.error('이미 투표한 의견입니다.');
       return
     }
@@ -112,7 +118,7 @@ function ViewCon({uid}) {
       return;
     }
     update(ref(db,`vote_list/${uid}/${uid_}`),{
-      user_uid: [...user_uid,userInfo.uid]
+      user_uid: [...user_uid,{uid:userInfo.uid,name:userInfo.displayName}]
     });
     runTransaction(ref(db,`vote_list/${uid}/${uid_}/vote_count`),pre => {
       return pre ? ++pre : 1;
@@ -170,6 +176,12 @@ function ViewCon({uid}) {
     setrankView(!rankView);
   }
 
+  const viewVoterList = (idx) => {
+    let ref = voterRef.current[idx]
+    console.log(ref)
+    ref.style.display = ref.style.display === 'none' ? 'flex' : 'none'
+  }
+
   return <>
     
     <div className={style.view_con_box}>
@@ -183,6 +195,8 @@ function ViewCon({uid}) {
               </li>
               <li>{`${roomData.max_vote}회 제안가능`}</li>
               <li>{roomData.voter === 1 ? `공개투표` : `비밀투표`}</li>
+              {roomData.add.includes('link') && <li>링크</li>}
+              {roomData.add.includes('img') && <li>이미지</li>}
             </ul>
             <h2>{roomData.title}</h2>
           </div>
@@ -230,20 +244,40 @@ function ViewCon({uid}) {
             <div className={style.con}>
               <div className={style.desc}>
                 <span className={style.vote_tit}>{el.title}</span>
+                {el.img &&
+                <span className={style.vote_link}>
+                  <img src={el.img} className={style.vote_img} alt={el.title} />
+                </span>
+                }
                 {el.link &&
                 <span className={style.vote_link}>
                   <a href={el.link} target="_blank">{el.link}</a>
                 </span>
+                }                
+              </div>
+              <div className={style.right_con}>                
+                {roomData && roomData.ing &&
+                <div className={style.btn_box}>
+                  <span className={style.count}>
+                    {el.vote_count > 0 ? <>{el.vote_count}</> : `0`}
+                  </span>
+                  <Button className={style.btn_vote} onClick={()=>{onVote(el.uid,el.user_uid)}}><AiOutlineLike className={style.ic_vote} /></Button>
+                </div>
                 }
+                {roomData && roomData.voter === 1 && 
+                  <>
+                    <button type='button' className={style.btn_vote_list_view} onClick={()=>{viewVoterList(idx)}}>
+                      <IoIosList />
+                      목록
+                    </button>
+                    <ul style={{display:"none"}} ref={voter => voterRef.current[idx] = voter}>
+                      {el.user_uid.map((user,idx2)=>(
+                        <li>{idx2+1} {user.name}</li>
+                      ))}
+                    </ul>    
+                  </> 
+                }         
               </div>
-              {roomData && roomData.ing &&
-              <div className={style.btn_box}>
-                <span className={style.count}>
-                  {el.vote_count > 0 ? <>{el.vote_count}</> : `0`}
-                </span>
-                <Button className={style.btn_vote} onClick={()=>{onVote(el.uid,el.user_uid)}}><AiOutlineLike className={style.ic_vote} /></Button>
-              </div>
-              }
             </div>
           </li>
         ))}
@@ -286,6 +320,14 @@ function ViewCon({uid}) {
             name="link"
           >
             <Input placeholder="링크주소" maxLength={50} />
+          </Form.Item>
+          }
+          {roomData && roomData.add && roomData.add.includes('img') &&
+          <Form.Item
+            className={form.item}
+            name="img"
+          >
+            <Input placeholder="이미지주소" maxLength={100} />
           </Form.Item>
           }
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>

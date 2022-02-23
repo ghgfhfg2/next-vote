@@ -7,7 +7,9 @@
   .list_box{
     @include flex();width: 100%;
   }
-  li {
+  .a {
+    color: #333;
+    cursor: pointer;
     flex:1;
     border-radius: 0.3rem;
     box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.25);
@@ -19,8 +21,8 @@
   }
   dt{padding: 0 1rem;
     @include flex();
-    .state_ing{font-size: 11px;border:1px solid #ddd;padding: 3px 5px;margin-right: 5px;border-radius: 4px;}
-    .state_end{font-size: 11px;padding: 3px 5px;margin-right: 5px;background-color: #aaa;color: #fff;border-radius: 4px;}
+    .state_ing{width:8px;height: 8px;border-radius: 50%;background-color: $p-color;margin-right: 5px;position: relative;top:2px}
+    .state_end{width:8px;height: 8px;border-radius: 50%;background-color: #999;margin-right: 5px;position: relative;top:2px}
     .limit{
       @include flex();
       margin-top: 7px;
@@ -32,9 +34,11 @@
     margin-left: auto;
   }
   button{border:none;background:none;
+    cursor: pointer;
     @include flex($j:center);
     padding: 0 1rem;
     svg{font-size: 20px;}
   }
   .btn_del{font-size: 18px;padding-right: 0;}
 }
+

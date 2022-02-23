@@ -2,11 +2,13 @@ import React, {useState,useEffect} from 'react';
 import { useDispatch,useSelector } from "react-redux";
 import { auth } from "src/firebase";
 import { signOut } from "firebase/auth";
-import { clearUser } from "@redux/actions/user_action";
+import { clearUser,nickChange } from "@redux/actions/user_action";
 import {useRouter} from 'next/router';
 import { db } from "src/firebase";
-import { ref, onValue, remove, get, off } from "firebase/database";
+import { ref, onValue, remove, get, off, update } from "firebase/database";
+import { Modal, Input, message } from 'antd';
 import ListUl from "../src/component/ListUl";
+import { IoSettingsOutline } from "react-icons/io5";
 
 function Mypage() {
   const userInfo = useSelector((state) => state.user.currentUser);
@@ -19,18 +21,18 @@ function Mypage() {
     onValue(listRef, data=>{
       let listArr = [];
       data.forEach(el=>{
-        el.val().vote_user && console.log(el.val().vote_user.forEach)
-        /*
         let vote_check = false;
-        el.val().vote_user && el.val().vote_user.forEach(user => {
-          console.log(user)
-          if(user === userInfo.uid) vote_check = true;
-        })
-        if(el.val().host === userInfo.uid || vote_check) listArr.push({...el.val(),uid:el.key})
-        */
+        if(el.val().vote_user){
+          for (let key in el.val().vote_user) {
+            const val = el.val().vote_user[key];
+            val ? vote_check = true : false;
+          }
+        }
+        if(userInfo && el.val().host === userInfo.uid || vote_check) listArr.push({...el.val(),uid:el.key})
+        
       })
       setListData(listArr)
-    });
+    });    
     return () => {
       off(listRef)
     };
@@ -62,25 +64,58 @@ function Mypage() {
       });
   };
 
+
+  const [nickModal, setNickModal] = useState(false)
+  const onNickModal = () => {
+    setNickModal(true)
+  }
+  const nickModalClose = () => {
+    setNickModal(false)
+  }
+
+  const [nickInput, setNickInput] = useState()
+  const onInputNick = (e) => {
+    setNickInput(e.target.value)
+  }
+  const onNickChange = () => {
+    const listRef = ref(db, `user/${userInfo.uid}`);
+    update(listRef, {nick:nickInput})
+    setNickModal(false)
+    dispatch(nickChange(nickInput));
+    message.success('닉네임을 변경했습니다.')
+  }
+
   
-  return (
+  return userInfo && (
     <div className='mypage_box'>
       <div className='profile_box'>
         <div className='profile'>
           <div>
             <span className='name'>{userInfo.displayName}</span>님 환영합니다.
+            <button className='btn_setting' type="button" onClick={onNickModal}>
+              <IoSettingsOutline />
+            </button>
           </div>
-          <button type='button' className='btn_logout' onClick={googleSignOut}>로그아웃</button>
+          <div className='right_menu'>
+            <button type="button" onClick={googleSignOut}>
+              logout
+            </button>
+          </div>
         </div>
       </div>
-      
+      <Modal title="닉네임 변경" visible={nickModal} onOk={onNickChange} onCancel={nickModalClose}>
+        <Input 
+          onChange={onInputNick}
+          placeholder="특수문자제외 10자이내로 가능합니다."
+          size="large"
+        />
+      </Modal>
       <dl className='my_list'>
-        <dt className='tit'>참여중인 방</dt>
+        <dt className='tit'>참여목록</dt>
         <dd>
-          {listData && <ListUl router={router} listData={listData} onDel={onDel} />}
+          {listData && <ListUl router={router} userUid={userInfo.uid} listData={listData} onDel={onDel} />}
         </dd>
       </dl>
-
     </div>
   )
 }
