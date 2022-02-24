@@ -1,10 +1,11 @@
 @import "scss-common.scss";
 
 .list {
-  line-height: 1.4;
+  line-height: 1.4;  
   margin-bottom: 0;
   @include grid($col: repeat(1, 1fr), $gap: 1rem 1rem);
   .list_box{
+    position: relative;
     @include flex();width: 100%;
   }
   .a {
@@ -16,13 +17,16 @@
     padding: 1rem 0;
   }
   dl,dd{margin-bottom: 0;}
+  .state_ing{display:block;position:absolute;left:0;top:0;width:6px;height: 100%;background-color: $p-color;border-top-left-radius: 0.3rem;border-bottom-left-radius: 0.3rem;}
+  .state_end{display:block;position:absolute;left:0;top:0;width:6px;height: 100%;background-color: #999;border-top-left-radius: 0.3rem;border-bottom-left-radius: 0.3rem;}
   dl{
-    @include flex();
+    @include flex();    
   }
   dt{padding: 0 1rem;
+    font-family: 'Dongle';
+    font-size: 24px;
+    line-height: 1;
     @include flex();
-    .state_ing{width:8px;height: 8px;border-radius: 50%;background-color: $p-color;margin-right: 5px;position: relative;top:2px}
-    .state_end{width:8px;height: 8px;border-radius: 50%;background-color: #999;margin-right: 5px;position: relative;top:2px}
     .limit{
       @include flex();
       margin-top: 7px;

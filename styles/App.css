@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&display=swap");
 .com-tab-box .tab-content {
   display: none; }
 
@@ -147,12 +148,6 @@ table {
 .content_box {
   padding: 1rem; }
 
-.write_form .ant-form-item {
-  margin-bottom: 10px; }
-
-.write_form .ant-form-item .ant-form-item-label {
-  padding-bottom: 0; }
-
 .loading_box {
   display: flex;
   justify-content: center;
@@ -233,7 +228,9 @@ footer.footer a {
   flex: 1;
   color: #333;
   cursor: pointer;
-  font-size: 11px;
+  font-family: 'Dongle';
+  font-size: 17px;
+  line-height: 1.1;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -241,7 +238,7 @@ footer.footer a {
 
 footer.footer a svg {
   font-size: 17px;
-  margin-bottom: 4px; }
+  height: 30px; }
 
 .mypage_box .profile_box {
   padding: 1rem;
@@ -250,7 +247,7 @@ footer.footer a svg {
 .mypage_box .profile_box .profile {
   font-size: 13px;
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: row; }
 
@@ -269,10 +266,7 @@ footer.footer a svg {
   font-weight: 700; }
 
 .right_menu {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  flex-direction: row; }
+  margin-left: 5px; }
 
 .right_menu button {
   border: none;
@@ -285,6 +279,70 @@ footer.footer a svg {
   top: 3px;
   position: relative;
   margin-left: 3px; }
+
+.mypage_button {
+  border: none;
+  background: none;
+  text-align: center;
+  width: 100%;
+  font-size: 12px; }
+
+.ant-btn-primary {
+  font-family: 'Dongle';
+  font-size: 22px !important; }
+
+.ant-btn-primary span {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; }
+
+.write_form .ant-form-item {
+  margin-bottom: 1rem; }
+
+.write_form .ant-form-item .ant-form-item-label {
+  padding-bottom: 0; }
+
+.regist_box {
+  min-height: calc(100vh - 60px);
+  padding-top: 1rem; }
+
+.regist_box .ant-form-item .ant-form-item-label > label {
+  font-weight: 700;
+  font-size: 22px; }
+
+.regist_box .ant-form label {
+  font-family: 'Dongle'; }
+
+.regist_box .ant-row.ant-form-item {
+  padding: 0 1rem; }
+
+.regist_box .ant-form-item-control-input-content {
+  height: 100%; }
+
+.regist_box .ant-input {
+  border-radius: 8px !important;
+  height: 40px; }
+
+.regist_box .ant-checkbox + span {
+  font-size: 20px; }
+
+.regist_box .ant-radio-group {
+  display: flex; }
+
+.regist_box .ant-radio-button-wrapper {
+  flex: 1; }
+
+.regist_box .ant-radio-button-wrapper span {
+  text-align: center;
+  display: block;
+  font-size: 18px; }
+
+.regist_box .ant-input:placeholder-shown {
+  font-family: 'Dongle';
+  font-weight: 400;
+  font-size: 18px; }
 
 .search_radio {
   width: 100%;

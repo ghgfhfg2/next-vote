@@ -16,15 +16,15 @@ function ListUl({listData, onDel, userUid}) {
       {listData.map((el, idx) => (
           <>
           <div className={style.list_box}>
+            {el.ing ? (
+              <span className={style.state_ing}></span>
+              ):(
+              <span className={style.state_end}></span>
+            )}
             <Link href={`/view/${el.uid}`}>
             <a className={style.a} key={idx} >
               <dl>
                 <dt>
-                  {el.ing ? (
-                    <span className={style.state_ing}></span>
-                    ):(
-                    <span className={style.state_end}></span>
-                  )}
                   <span className={style.tit}>{el.title}
                   {el.password && <aiIcon.AiOutlineLock style={{position:"relative",top:"2px",marginLeft:"5px"}} />}
                   </span>

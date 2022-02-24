@@ -12,13 +12,14 @@ import {useRouter} from 'next/router'
 import Login from "./login";
 import Loading from "../src/component/Loading";
 import Footer from "@component/Footer";
+import AppLayout from "@component/AppLayout";
 
 
 function App({ Component, pageProps }) {
   const dispatch = useDispatch();
   const router = useRouter();  
   const path = router.pathname;
-  const [authCheck, setAuthCheck] = useState(true);
+  const [authCheck, setAuthCheck] = useState(false);
   const [isLoading, setisLoading] = useState(true);
 
   auth.onAuthStateChanged((user) => {
@@ -58,7 +59,9 @@ function App({ Component, pageProps }) {
         }
         {authCheck ? (
             <>
-            <Component {...pageProps} />
+            <AppLayout>
+              <Component {...pageProps} />
+            </AppLayout>
             {!path.includes('/view') && 
               <>
               <div className="empty_box"></div>

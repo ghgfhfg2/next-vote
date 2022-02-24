@@ -15,25 +15,25 @@ function Footer() {
         <Link href="/">
           <a>
           {path === '/' ? <IoIosListBox /> : <IoIosList />}
-          목록
+          <span>목록</span>
           </a>
         </Link>
         <Link href="/regist">
           <a>
           {path === '/regist' ? <RiFileAddFill /> : <RiFileAddLine />}
-          등록
+          <span>등록</span>
           </a>
         </Link>
         <Link href="/search">
           <a>
           {path === '/search' ? <RiSearchFill /> : <RiSearchLine />}
-          검색
+          <span>검색</span>
           </a>
         </Link>
         <Link href="/mypage">
           <a>
           {path === '/mypage' ? <RiUser3Fill /> : <RiUser3Line />}
-          마이페이지
+          <span>내 정보</span>
           </a>
         </Link>
       </footer>

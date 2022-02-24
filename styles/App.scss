@@ -1,5 +1,5 @@
 @import "scss-common.scss";
-
+@import url('https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&display=swap');
 html,
 body,
 div,
@@ -139,11 +139,7 @@ q:after {
   padding: 1rem; }
 
 
-.write_form .ant-form-item {
-  margin-bottom: 10px; }
 
-.write_form .ant-form-item .ant-form-item-label {
-  padding-bottom: 0; }
 
 .loading_box{
   @include flex($j:center);
@@ -195,9 +191,13 @@ footer.footer{
     flex:1;
     color:#333;
     cursor: pointer;
-    font-size: 11px;
-    svg{font-size: 17px;margin-bottom: 4px;}
+    font-family: 'Dongle';
+    font-size: 17px;
+    line-height: 1.1;
+    svg{font-size: 17px;height: 30px;
+    }
     @include flex($d:column);
+
   }
 }
 
@@ -208,7 +208,7 @@ footer.footer{
     border-bottom: 10px solid #f1f1f1;
     .profile{
       font-size: 13px;
-      @include flex($j:space-between);
+      @include flex();
       .name{font-weight: 700;}
       .ic{font-size: 17px;}
     }
@@ -222,10 +222,43 @@ footer.footer{
 }
 
 .right_menu{
-  @include flex();
+  margin-left: 5px;
   button{border:none;background: none;}
 }
 .btn_setting {font-size: 15px;border:none;background: none;top:3px;position: relative;margin-left: 3px;}
+.mypage_button{
+  border: none;background: none;
+  text-align: center;
+  width: 100%;
+  font-size: 12px;
+}
+
+.ant-btn-primary{font-family: 'Dongle';font-size: 22px !important;
+  span{
+    height: 100%;
+    @include flex($j:center);
+  }
+}
+//regist
+.write_form .ant-form-item {
+  margin-bottom: 1rem; }
+.write_form .ant-form-item .ant-form-item-label {
+  padding-bottom: 0; }
+.regist_box{
+  min-height: calc(100vh - 60px);
+  padding-top: 1rem;
+  .ant-form-item .ant-form-item-label > label{font-weight: 700;font-size: 22px;}
+  .ant-form label{font-family: 'Dongle';}
+  .ant-row.ant-form-item{padding: 0 1rem;}
+  .ant-form-item-control-input-content{height: 100%;}
+  .ant-input{border-radius: 8px !important;height: 40px;}
+  .ant-checkbox + span{font-size: 20px;}
+  .ant-radio-group{display: flex;}
+  .ant-radio-button-wrapper{flex:1;
+    span{text-align: center;display: block;font-size: 18px;}
+  }
+  .ant-input:placeholder-shown{font-family: 'Dongle';font-weight: 400;font-size: 18px;}
+}
 
 
 //search

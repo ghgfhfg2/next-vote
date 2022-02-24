@@ -196,7 +196,9 @@
   height: 40px;
   background-color: #1890ff;
   border: none;
-  color: #fff; }
+  color: #fff;
+  font-family: 'Dongle';
+  font-size: 20px; }
 
 .btn_open_box .btn_open {
   flex: 2; }

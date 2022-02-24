@@ -6,7 +6,7 @@ import { clearUser,nickChange } from "@redux/actions/user_action";
 import {useRouter} from 'next/router';
 import { db } from "src/firebase";
 import { ref, onValue, remove, get, off, update } from "firebase/database";
-import { Modal, Input, message } from 'antd';
+import { Modal, Input, message, Menu, Dropdown } from 'antd';
 import ListUl from "../src/component/ListUl";
 import { IoSettingsOutline } from "react-icons/io5";
 
@@ -92,14 +92,27 @@ function Mypage() {
         <div className='profile'>
           <div>
             <span className='name'>{userInfo.displayName}</span>님 환영합니다.
-            <button className='btn_setting' type="button" onClick={onNickModal}>
-              <IoSettingsOutline />
-            </button>
           </div>
           <div className='right_menu'>
-            <button type="button" onClick={googleSignOut}>
-              logout
-            </button>
+            <Dropdown 
+            placement="bottomCenter" 
+            arrow
+            overlay={(
+              <Menu>
+                <Menu.Item key="0">
+                  <button type="button" className='mypage_button' onClick={onNickModal}>
+                    닉네임변경
+                  </button>
+                </Menu.Item>
+                <Menu.Item key="1">
+                  <button type="button" className='mypage_button' onClick={googleSignOut}>
+                    logout
+                  </button>
+                </Menu.Item>
+              </Menu>
+            )} trigger={['click']}>
+              <IoSettingsOutline />
+            </Dropdown>
           </div>
         </div>
       </div>

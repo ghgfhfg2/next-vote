@@ -124,7 +124,7 @@
   transform: translateX(-50%);
   @include flex();
   button{height: 40px;background-color: $p-color;
-    border:none;color:#fff;}
+    border:none;color:#fff;font-family: 'Dongle';font-size: 20px;}
   .btn_open{flex:2}
   .btn_finish{flex:1;background-color: #333;}
   .finish_txt{
