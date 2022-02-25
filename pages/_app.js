@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Top from "@component/Top";
-import "styles/App.css";
 import "antd/dist/antd.css";
+import "styles/App.css";
 import wrapper from "@redux/store/configureStore";
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, clearUser, nickChange } from "@redux/actions/user_action";

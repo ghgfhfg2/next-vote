@@ -1,5 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Oswald&display=swap");
-@import url("https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Dongle:wght@400;700&family=Noto+Sans+KR:wght@400;700&display=swap");
 .com-tab-box .tab-content {
   display: none; }
 
@@ -124,7 +124,8 @@ q:after {
   content: none; }
 
 html {
-  background-color: #f9f9f9; }
+  background-color: #f9f9f9;
+  font-family: 'Noto Sans KR'; }
 
 body {
   max-width: 500px;
@@ -137,6 +138,10 @@ button {
 table {
   border-collapse: collapse;
   border-spacing: 0; }
+
+.ant-input::placeholder {
+  font-family: 'Dongle';
+  font-size: 18px; }
 
 #content {
   position: relative;
@@ -240,6 +245,27 @@ footer.footer a svg {
   font-size: 17px;
   height: 30px; }
 
+.login_box {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column; }
+
+.login_box button {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
+
+.login_box button svg {
+  margin-right: 5px; }
+
 .mypage_box .profile_box {
   padding: 1rem;
   border-bottom: 10px solid #f1f1f1; }
@@ -263,7 +289,9 @@ footer.footer a svg {
 
 .mypage_box .my_list dt.tit {
   margin-bottom: 10px;
-  font-weight: 700; }
+  font-weight: 700;
+  font-family: 'Dongle';
+  font-size: 22px; }
 
 .right_menu {
   margin-left: 5px; }
@@ -371,3 +399,10 @@ footer.footer a svg {
 .list_end {
   color: #999;
   background-color: #f5f5f5; }
+
+.search_input .ant-btn-primary {
+  font-size: inherit !important; }
+
+.search_input .ant-btn-primary span {
+  height: auto;
+  display: flex; }

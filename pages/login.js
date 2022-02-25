@@ -9,6 +9,7 @@ import { auth, provider } from "src/firebase";
 import {useRouter} from 'next/router'
 import { useDispatch, useSelector } from "react-redux";
 import { setUser, clearUser } from "@redux/actions/user_action";
+import { FcGoogle } from "react-icons/fc"
 
 export default function Login() {
   let dispatch = useDispatch();
@@ -50,12 +51,11 @@ export default function Login() {
 
   return (
     <>
-      <button type="button" onClick={googleHandler}>
-        login
-      </button>
-      <button type="button" onClick={googleSignOut}>
-        logout
-      </button>
+      <div className="login_box">
+        <button type="button" onClick={googleHandler}>
+          <FcGoogle /><span>Login</span>
+        </button>
+      </div>
     </>
   );
 }
