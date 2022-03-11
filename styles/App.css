@@ -266,6 +266,24 @@ footer.footer a svg {
 .login_box button svg {
   margin-right: 5px; }
 
+.list_tab {
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-direction: row;
+  margin-bottom: 15px; }
+
+.list_tab button {
+  flex: 1;
+  border: none;
+  background-color: #fff;
+  padding: 15px 0;
+  border-bottom: 2px solid #ddd;
+  font-size: 13px; }
+
+.list_tab button.on {
+  border-bottom-color: #1890ff; }
+
 .mypage_box .profile_box {
   padding: 1rem;
   border-bottom: 10px solid #f1f1f1; }

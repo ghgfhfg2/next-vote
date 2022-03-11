@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setUser, clearUser, nickChange } from "@redux/actions/user_action";
 import { db, auth } from "src/firebase";
 import { ref, onValue, off, get } from "firebase/database";
-import {useRouter} from 'next/router'
+import {useRouter} from 'next/router';
 import Login from "./login";
 import Loading from "../src/component/Loading";
 import Footer from "@component/Footer";

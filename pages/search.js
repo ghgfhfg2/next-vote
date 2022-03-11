@@ -29,12 +29,12 @@ function SearchPage() {
   return (
     <>
       <div className="content_box list_content_box">
-        <Search
-          placeholder="방 제목 or 코드로 검색 가능합니다." 
+        <Search 
+          placeholder="방 제목 or 코드로 검색 가능합니다."  
           onSearch={onSearch} 
           enterButton 
-          size="large"
-          className="search_input"
+          size="large" 
+          className="search_input" 
         />
       </div>
       {listData && listData.length > 0 ? ( 

@@ -18,16 +18,16 @@ function Footer() {
           <span>목록</span>
           </a>
         </Link>
-        <Link href="/regist">
-          <a>
-          {path === '/regist' ? <RiFileAddFill /> : <RiFileAddLine />}
-          <span>등록</span>
-          </a>
-        </Link>
         <Link href="/search">
           <a>
           {path === '/search' ? <RiSearchFill /> : <RiSearchLine />}
           <span>검색</span>
+          </a>
+        </Link>
+        <Link href="/regist">
+          <a>
+          {path === '/regist' ? <RiFileAddFill /> : <RiFileAddLine />}
+          <span>등록</span>
           </a>
         </Link>
         <Link href="/mypage">

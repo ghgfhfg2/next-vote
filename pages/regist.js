@@ -2,7 +2,7 @@ import React, {useState} from "react";
 import { useSelector } from "react-redux";
 import { Form, Input, Button, Checkbox, Radio } from "antd";
 import { db } from "src/firebase";
-import { ref, set, runTransaction } from "firebase/database";
+import { ref, set, runTransaction, update } from "firebase/database";
 import uuid from "react-uuid";
 import { getFormatDate } from "@component/CommonFunc";
 import {useRouter} from 'next/router'
@@ -14,6 +14,29 @@ function Regist() {
   const onFinish = (values) => {
     const date = getFormatDate(new Date());
     const uid = uuid();
+    const tagArr = values.tag.split(',');
+    let tagObj = {}
+    tagArr.map(el=>{
+      tagObj[el] = 1;
+    })
+    
+    runTransaction(ref(db,`tag/${date.full}`), pre => {
+      if(pre){
+        for(let key in pre){
+          tagArr.map(el => {
+            pre[key] = key === el ? pre[key]+1 : pre[key];
+          })
+        }
+        tagArr.map(el => {
+          if(!pre[el]){
+            pre[el] = 1
+          }
+        })
+        return pre
+      }else{
+        return tagObj
+      }
+    })
     runTransaction(ref(db,`user/${userInfo.uid}`), pre => {
       let res = pre ? pre : {room:[]};
       res.room = [...res.room, uid]
@@ -63,12 +86,19 @@ function Regist() {
             <Input maxLength={30} />
           </Form.Item>
           <Form.Item
+            label="태그(콤마(,)로 구분 / 최대10개)"
+            name="tag"
+            rules={[{ required: true, message: "태그는 필수입니다." }]}
+          >
+            <Input maxLength={100} placeholder="예) 태그1,태그2,태그3" />
+          </Form.Item>
+          <Form.Item
             label="추가로 입력 가능한 항목"
             name="add"
           >
             <Checkbox.Group>
-              <Checkbox value="link">링크</Checkbox>
-              <Checkbox value="img">이미지</Checkbox>
+              <Checkbox value="link">외부링크</Checkbox>
+              <Checkbox value="img">이미지(이미지 주소)</Checkbox>
             </Checkbox.Group>
           </Form.Item>
           <Form.Item
