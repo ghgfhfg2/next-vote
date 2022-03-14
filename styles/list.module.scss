@@ -37,6 +37,13 @@
   dd{
     margin-left: auto;
   }
+  .tag_list{
+    padding:0 1rem;
+    @include flex();font-size: 12px;
+    color: #999;
+    flex-wrap: wrap;
+    li{margin-right: 3px;}
+  }
   button{border:none;background:none;
     cursor: pointer;
     @include flex($j:center);

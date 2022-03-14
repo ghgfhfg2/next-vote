@@ -9,7 +9,6 @@ import * as aiIcon from 'react-icons/ai';
 function ListUl({listData, onDel, userUid}) {
   const router = useRouter();
   const path = router.pathname;
-
   
   return (
     <div className={style.list}>
@@ -33,6 +32,11 @@ function ListUl({listData, onDel, userUid}) {
                   <button type="button"><ioIcon.IoEnterOutline /></button>
                 </dd>
               </dl>
+              <ul className={style.tag_list}>
+                {el.tag.map((tag,idx)=>(
+                  <li>#{tag}</li>
+                ))}
+              </ul>
             </a>
             </Link>
             {el.host === userUid && 

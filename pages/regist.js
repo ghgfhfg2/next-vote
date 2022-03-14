@@ -44,6 +44,7 @@ function Regist() {
     });
     set(ref(db,`list/${uid}`),{
       ...values,
+      tag:tagObj,
       date,
       ing: true,
       host: userInfo.uid,

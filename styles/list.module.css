@@ -83,6 +83,19 @@
 .list dd {
   margin-left: auto; }
 
+.list .tag_list {
+  padding: 0 1rem;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  font-size: 12px;
+  color: #999;
+  flex-wrap: wrap; }
+
+.list .tag_list li {
+  margin-right: 3px; }
+
 .list button {
   border: none;
   background: none;

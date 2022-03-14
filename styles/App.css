@@ -390,6 +390,27 @@ footer.footer a svg {
   font-weight: 400;
   font-size: 18px; }
 
+.search_input_box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: stretch;
+  flex-direction: row; }
+
+.search_input_box .ant-select:not(.ant-select-customize-input) .ant-select-selector {
+  height: 100%;
+  width: 90px;
+  margin-right: 5px; }
+
+.search_input_box .ant-select-single .ant-select-selector .ant-select-selection-item {
+  line-height: 1;
+  font-family: 'Dongle';
+  font-size: 20px;
+  padding-top: 12px; }
+
+.ant-select-item-option-content {
+  font-family: 'Dongle';
+  font-size: 20px; }
+
 .search_radio {
   width: 100%;
   display: flex !important;
