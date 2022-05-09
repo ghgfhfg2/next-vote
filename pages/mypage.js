@@ -18,6 +18,7 @@ function Mypage() {
   const [listData, setListData] = useState();
   useEffect(() => {
     const listRef = ref(db, `list`);
+    
     onValue(listRef, data=>{
       let listArr = [];
       data.forEach(el=>{
@@ -29,7 +30,11 @@ function Mypage() {
           }
         }
         if(userInfo && el.val().host === userInfo.uid || vote_check) listArr.push({...el.val(),uid:el.key})
-        
+      })
+      // tag를 객체에서 배열로 변환
+      listArr.map(el=>{
+        let tagArr = Object.keys(el.tag)
+        el.tag = tagArr;
       })
       setListData(listArr)
     });    

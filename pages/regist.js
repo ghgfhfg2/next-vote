@@ -14,29 +14,31 @@ function Regist() {
   const onFinish = (values) => {
     const date = getFormatDate(new Date());
     const uid = uuid();
-    const tagArr = values.tag.split(',');
-    let tagObj = {}
-    tagArr.map(el=>{
-      tagObj[el] = 1;
-    })
-    
-    runTransaction(ref(db,`tag/${date.full}`), pre => {
-      if(pre){
-        for(let key in pre){
-          tagArr.map(el => {
-            pre[key] = key === el ? pre[key]+1 : pre[key];
-          })
-        }
-        tagArr.map(el => {
-          if(!pre[el]){
-            pre[el] = 1
+    if(values.tag){
+      const tagArr = values.tag.split(',');
+      let tagObj = {}
+      tagArr.map(el=>{
+        tagObj[el] = 1;
+      })
+      
+      runTransaction(ref(db,`tag/${date.full}`), pre => {
+        if(pre){
+          for(let key in pre){
+            tagArr.map(el => {
+              pre[key] = key === el ? pre[key]+1 : pre[key];
+            })
           }
-        })
-        return pre
-      }else{
-        return tagObj
-      }
-    })
+          tagArr.map(el => {
+            if(!pre[el]){
+              pre[el] = 1
+            }
+          })
+          return pre
+        }else{
+          return tagObj
+        }
+      })
+    }
     runTransaction(ref(db,`user/${userInfo.uid}`), pre => {
       let res = pre ? pre : {room:[]};
       res.room = [...res.room, uid]
@@ -44,7 +46,7 @@ function Regist() {
     });
     set(ref(db,`list/${uid}`),{
       ...values,
-      tag:tagObj,
+      tag:tagObj ? tagObj : '',
       date,
       ing: true,
       host: userInfo.uid,
@@ -56,20 +58,17 @@ function Regist() {
     console.log("Failed:", errorInfo);
   };
 
-  const [sliderNum, setSliderNum] = useState(3)
-  const onSlider = (e) => {
-    setSliderNum(e)
-  }
+
   return (
     <>
       <div className="regist_box">
         <Form
           name="basic"
-          labelCol={{ span: 7 }}
-          wrapperCol={{ span: 17 }}
           initialValues={{ 
             type: 1 ,
+            sender: 1,
             voter: 1,
+            room_open: 1,
             password: '',
             max_vote: 1,
             add:''
@@ -89,7 +88,6 @@ function Regist() {
           <Form.Item
             label="태그(콤마(,)로 구분 / 최대10개)"
             name="tag"
-            rules={[{ required: true, message: "태그는 필수입니다." }]}
           >
             <Input maxLength={100} placeholder="예) 태그1,태그2,태그3" />
           </Form.Item>
@@ -124,19 +122,37 @@ function Regist() {
             </Radio.Group>
           </Form.Item>
           <Form.Item
+            label="제안자공개"
+            name="sender"
+          >
+            <Radio.Group size="large">
+              <Radio.Button value={1}>공개</Radio.Button>
+              <Radio.Button value={2}>비공개</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item
             label="투표자공개"
             name="voter"
           >
             <Radio.Group size="large">
-              <Radio.Button value={1}>공개투표</Radio.Button>
-              <Radio.Button value={2}>비밀투표</Radio.Button>
+              <Radio.Button value={1}>공개</Radio.Button>
+              <Radio.Button value={2}>비공개</Radio.Button>
             </Radio.Group>
           </Form.Item>
+          <Form.Item
+            label="방 공개(목록에서 표시여부)"
+            name="room_open"
+          >
+            <Radio.Group size="large">
+              <Radio.Button value={1}>공개방</Radio.Button>
+              <Radio.Button value={2}>비공개방</Radio.Button>
+            </Radio.Group>
+          </Form.Item> 
           <Form.Item
             label="비밀번호"
             name="password"
           >
-            <Input placeholder="암호가 없으면 공개방으로 생성됩니다." maxLength={15} />
+            <Input placeholder="암호가 없으면 누구나 입장 가능합니다." maxLength={15} />
           </Form.Item>
           <div style={{ display: "flex", justifyContent: "center",padding:"1rem" }}>
             <Button size="large" type="primary" htmlType="submit" style={{ width: "100%" }}>

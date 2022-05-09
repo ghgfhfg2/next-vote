@@ -120,7 +120,7 @@ q:after {
   content: "";
   content: none; }
 
-  html{background-color: #f9f9f9;font-family: 'Noto Sans KR';}
+  html{font-family: 'Noto Sans KR';background-color: #f1f1f1;}
   body{max-width: 500px;margin:0 auto !important;background-color: #fff;}
 
   button{cursor: pointer;}
@@ -143,6 +143,9 @@ q:after {
   padding: 1rem; }
 
 
+.flex_box{
+  @include flex();
+}
 
 
 .loading_box{
@@ -219,6 +222,22 @@ footer.footer{
 
 //리스트
 .list_content_box{
+  &.top{padding-bottom: 0;}
+  .tag_list{
+    font-family: 'Dongle';
+    dt{font-size: 24px;margin-right: 8px;flex-shrink: 0;}
+    margin-top: 20px;margin-bottom: 0;
+    @include flex($a:baseline);
+    dd{
+      flex-wrap: wrap;
+      margin-bottom: 0;
+      @include flex();
+    }
+    button{padding:5px 10px;border:1px solid $p-color;border-radius: 10px;background: #fff;margin-right: 5px;margin-bottom:5px;color:$p-color;font-size: 18px;line-height: 1;
+      @include flex($j:center);
+      &.on{background:$p-color;color: #fff;}
+    }  
+  }
 }
 .list_tab{
   @include flex($a:stretch);
@@ -271,11 +290,14 @@ footer.footer{
   }
 }
 //regist
+.write_form.ant-form .ant-form-item{flex-wrap: wrap;}
+.write_form.ant-form .ant-form-item-label{width: 100%;text-align: left;}
 .write_form .ant-form-item {
   margin-bottom: 1rem; }
 .write_form .ant-form-item .ant-form-item-label {
   padding-bottom: 0; }
 .regist_box{
+  background-color: #fff;
   min-height: calc(100vh - 60px);
   padding-top: 1rem;
   .ant-form-item .ant-form-item-label > label{font-weight: 700;font-size: 22px;}

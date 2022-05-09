@@ -124,8 +124,8 @@ q:after {
   content: none; }
 
 html {
-  background-color: #f9f9f9;
-  font-family: 'Noto Sans KR'; }
+  font-family: 'Noto Sans KR';
+  background-color: #f1f1f1; }
 
 body {
   max-width: 500px;
@@ -152,6 +152,12 @@ table {
 
 .content_box {
   padding: 1rem; }
+
+.flex_box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
 
 .loading_box {
   display: flex;
@@ -266,6 +272,50 @@ footer.footer a svg {
 .login_box button svg {
   margin-right: 5px; }
 
+.list_content_box.top {
+  padding-bottom: 0; }
+
+.list_content_box .tag_list {
+  font-family: 'Dongle';
+  margin-top: 20px;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  flex-direction: row; }
+
+.list_content_box .tag_list dt {
+  font-size: 24px;
+  margin-right: 8px;
+  flex-shrink: 0; }
+
+.list_content_box .tag_list dd {
+  flex-wrap: wrap;
+  margin-bottom: 0;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
+
+.list_content_box .tag_list button {
+  padding: 5px 10px;
+  border: 1px solid #1890ff;
+  border-radius: 10px;
+  background: #fff;
+  margin-right: 5px;
+  margin-bottom: 5px;
+  color: #1890ff;
+  font-size: 18px;
+  line-height: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; }
+
+.list_content_box .tag_list button.on {
+  background: #1890ff;
+  color: #fff; }
+
 .list_tab {
   display: flex;
   justify-content: flex-start;
@@ -344,6 +394,13 @@ footer.footer a svg {
   align-items: center;
   flex-direction: row; }
 
+.write_form.ant-form .ant-form-item {
+  flex-wrap: wrap; }
+
+.write_form.ant-form .ant-form-item-label {
+  width: 100%;
+  text-align: left; }
+
 .write_form .ant-form-item {
   margin-bottom: 1rem; }
 
@@ -351,6 +408,7 @@ footer.footer a svg {
   padding-bottom: 0; }
 
 .regist_box {
+  background-color: #fff;
   min-height: calc(100vh - 60px);
   padding-top: 1rem; }
 

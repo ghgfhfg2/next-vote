@@ -69,7 +69,19 @@ function ViewCon({uid}) {
     const linkRegex = /[\<\>\{\}\s]/g;
     values.title && values.title.replace(linkRegex,"")
     values.link = values.link ? values.link.replace(linkRegex,"") : ''
-    values.img = values.img ? values.img.replace(linkRegex,"") : ''
+    values.img = values.img ? values.img.replace(linkRegex,"") : '';
+    if(values.title.length > 30){
+      message.error('제목이 너무 깁니다.');
+      return;
+    }
+    if(values.link.length > 200){
+      message.error('링크주소 경로가 너무 깁니다.');
+      return;
+    }
+    if(values.img.length > 200){
+      message.error('이미지주소 경로가 너무 깁니다.');
+      return;
+    }
     runTransaction(ref(db,`list/${uid}/${userInfo.uid}`), pre => {
       if(pre && pre.submit_count && pre.submit_count >= roomData.max_vote){
         message.error(`최대 제안횟수를 초과했습니다.`);
@@ -138,10 +150,12 @@ function ViewCon({uid}) {
   const onSubmitPop = () => {
     setsubmitPop(true);
     submitBox.current.style.transform = 'translate(-50%,0)'
+    submitBox.current.style.display = 'block'
   }
   const closeSubmitPop = () => {
     setsubmitPop(false);
-    submitBox.current.style.transform = 'translate(-50%,100%)'
+    submitBox.current.style.transform = 'translate(-50%,100%)'   
+    submitBox.current.style.display = 'none' 
     formRef.current.setFieldsValue({
       title:'',
       link:''
@@ -194,7 +208,9 @@ function ViewCon({uid}) {
                 {roomData.type === 1 ? `단일투표` : `중복투표`}
               </li>
               <li>{`${roomData.max_vote}회 제안가능`}</li>
-              <li>{roomData.voter === 1 ? `공개투표` : `비밀투표`}</li>
+              <li>{roomData.sender === 1 ? `제안자공개` : `제안자비공개`}</li>
+              <li>{roomData.voter === 1 ? `투표자공개` : `투표자비공개`}</li>
+              <li>{roomData.room_open === 1 ? `공개방` : `비공개방`}</li>
               {roomData.add.includes('link') && <li>링크</li>}
               {roomData.add.includes('img') && <li>이미지</li>}
             </ul>
@@ -238,7 +254,9 @@ function ViewCon({uid}) {
            data-uid={el.uid}
           >
             <div className={style.profile}>
-              <span>{el.user_name}</span>
+              {roomData.sender && roomData.sender === 1 &&
+                <span>{el.user_name}</span>
+              }
               <span className={style.date}>{`${el.date.hour}:${el.date.min}`}</span>
             </div>
             <div className={style.con}>
@@ -312,14 +330,14 @@ function ViewCon({uid}) {
             name="title"
             rules={[{ required: true, message: "제목은 필수입니다." }]}
           >
-            <Input placeholder="제목" maxLength={30} />
+            <Input placeholder="제목" />
           </Form.Item>
           {roomData && roomData.add && roomData.add.includes('link') &&
           <Form.Item
             className={form.item}
             name="link"
           >
-            <Input placeholder="링크주소" maxLength={50} />
+            <Input placeholder="링크주소" />
           </Form.Item>
           }
           {roomData && roomData.add && roomData.add.includes('img') &&
@@ -327,7 +345,7 @@ function ViewCon({uid}) {
             className={form.item}
             name="img"
           >
-            <Input placeholder="이미지주소" maxLength={100} />
+            <Input placeholder="이미지주소" />
           </Form.Item>
           }
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>

@@ -20,12 +20,12 @@ function ListUl({listData, onDel, userUid}) {
               ):(
               <span className={style.state_end}></span>
             )}
-            <Link href={`/view/${el.uid}`}>
+            <Link href="/view/[id]" as={`/view/${el.uid}`}>
             <a className={style.a} key={idx} >
               <dl>
                 <dt>
                   <span className={style.tit}>{el.title}
-                  {el.password && <aiIcon.AiOutlineLock style={{position:"relative",top:"2px",marginLeft:"5px"}} />}
+                  {el.password && <aiIcon.AiOutlineLock style={{fontSize:"14px",position:"relative",top:"2px",marginLeft:"5px"}} />}
                   </span>
                 </dt>
                 <dd>
