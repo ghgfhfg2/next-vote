@@ -266,10 +266,12 @@
   justify-content: flex-start;
   align-items: center;
   flex-direction: row;
+  flex-wrap: wrap;
   margin-bottom: 5px; }
 
 .room_info li {
   margin-right: 5px;
+  margin-bottom: 5px;
   border-radius: 5px;
   border: 1px solid #ddd;
   padding: 5px;

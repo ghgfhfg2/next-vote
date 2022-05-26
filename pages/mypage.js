@@ -25,11 +25,15 @@ function Mypage() {
         let vote_check = false;
         if(el.val().vote_user){
           for (let key in el.val().vote_user) {
-            const val = el.val().vote_user[key];
-            val ? vote_check = true : false;
+            if(userInfo){
+              vote_check = userInfo.uid === key ? true : false;
+            }
+
           }
         }
-        if(userInfo && el.val().host === userInfo.uid || vote_check) listArr.push({...el.val(),uid:el.key})
+        if(userInfo && el.val().host === userInfo.uid || vote_check) {
+          listArr.push({...el.val(),uid:el.key})
+        }
       })
       // tag를 객체에서 배열로 변환
       listArr.map(el=>{

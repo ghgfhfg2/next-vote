@@ -44,7 +44,6 @@ export default function View() {
         })
       })
       joinMember.includes(`${userInfo.uid}`) ? setIsJoin(true) : null;
-      console.log(joinMember)
     })
 
     runTransaction(ref(db, `list/${uid}/join_count`), pre => {

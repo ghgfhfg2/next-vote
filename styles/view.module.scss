@@ -158,8 +158,10 @@
   flex-shrink: 0;
   color: #888;
   @include flex();
+  flex-wrap: wrap;
   margin-bottom: 5px;
   li{margin-right: 5px;
+    margin-bottom:5px;
     border-radius: 5px;
     border:1px solid #ddd;
     padding:5px;

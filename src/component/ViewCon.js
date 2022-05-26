@@ -192,7 +192,6 @@ function ViewCon({uid}) {
 
   const viewVoterList = (idx) => {
     let ref = voterRef.current[idx]
-    console.log(ref)
     ref.style.display = ref.style.display === 'none' ? 'flex' : 'none'
   }
 

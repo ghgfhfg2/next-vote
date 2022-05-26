@@ -60,7 +60,7 @@ function List() {
           }
         })
 
-        listArr = listArr.filter(el=>el.room_open === 2)
+        listArr = listArr.filter(el=>el.room_open === 1)
   
         // tag를 객체에서 배열로 변환
         listArr.map(el=>{
