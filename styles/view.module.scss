@@ -24,7 +24,7 @@
   @include flex($d:column,$a:flex-start);
   li{
     @include flex($a:baseline);
-    padding:3px 1rem;
+    padding:7px 1rem;
     width:100%;
     position: relative;
     border-bottom: 1px solid #ddd;
@@ -39,10 +39,12 @@
     .rank_con{
       @include flex($j:space-between);
       margin-left: 10px;
+      font-size: 14px;
     }
     .ic_target{margin-left: auto;font-size: 11px;
       @include flex();
-      
+      flex-shrink: 0;
+      cursor: pointer;
     }
   }
 }

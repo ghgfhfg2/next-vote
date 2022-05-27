@@ -14,7 +14,7 @@ function ListUl({listData, onDel, userUid}) {
     <div className={style.list}>
       {listData.map((el, idx) => (
           <>
-          <div className={style.list_box}>
+          <div key={el.uid} className={style.list_box}>
             {el.ing ? (
               <span className={style.state_ing}></span>
               ):(
@@ -33,7 +33,7 @@ function ListUl({listData, onDel, userUid}) {
                 </dd>
               </dl>
               <ul className={style.tag_list}>
-                {el.tag.map((tag,idx)=>(
+                {el.tag && el.tag.map((tag,idx)=>(
                   <li>#{tag}</li>
                 ))}
               </ul>

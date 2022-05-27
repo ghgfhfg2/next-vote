@@ -103,3 +103,5 @@ export const xssReplace = (str) => {
   const strTest = regExp.test(str)
   return strTest
 }
+
+

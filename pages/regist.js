@@ -43,17 +43,22 @@ function Regist() {
       let res = pre ? pre : {room:[]};
       res.room = [...res.room, uid]
       return res;
-    });
-    set(ref(db,`list/${uid}`),{
-      ...values,
-      tag:tagObj ? tagObj : '',
-      date,
-      ing: true,
-      host: userInfo.uid,
-      vote_user:''
-    });
-    router.push(`/view/${uid}`);
+    })
+    .then(()=>{
+      set(ref(db,`list/${uid}`),{
+        ...values,
+        tag:tagObj ? tagObj : '',
+        date,
+        ing: true,
+        host: userInfo.uid,
+        vote_user:''
+      });
+    })
+    .then(()=>{
+      router.push(`/view/${uid}`);
+    })
   };
+
   const onFinishFailed = (errorInfo) => {
     console.log("Failed:", errorInfo);
   };

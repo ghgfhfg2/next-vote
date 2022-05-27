@@ -1,20 +1,36 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { Form , Input, Button, message } from "antd";
+import { Form , Input, Button, message, Upload } from "antd";
 import { db } from "src/firebase";
-import { get, ref, set, onValue, off, runTransaction, update, remove } from "firebase/database";
+import { get, ref as dRef, set, onValue, off, runTransaction, update, remove } from "firebase/database";
 import { getFormatDate } from "@component/CommonFunc";
 import uuid from "react-uuid"
 import style from "styles/view.module.css";
 import form from "styles/form.module.css";
-import { AiOutlineLike } from "react-icons/ai";
+import { AiOutlineLike, AiOutlineUpload } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
 import { IoIosArrowUp,IoIosArrowDown,IoIosList } from "react-icons/io";
 import { BiTargetLock } from "react-icons/bi";
 import {useRouter} from 'next/router';
+import imageCompression from 'browser-image-compression';  
+import {
+  getStorage,
+  ref as sRef,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+const storage = getStorage();
 
+const normFile = (e) => {
+  console.log('Upload event:', e);
+  if (Array.isArray(e)) {
+    return e;
+  }
+  return e?.fileList;
+};
 
 function ViewCon({uid}) {
+
   const formRef = useRef();
   const listRef = useRef([]);
   const voterRef = useRef([]);
@@ -26,12 +42,12 @@ function ViewCon({uid}) {
 
   const [ranking, setRanking] = useState([]);
   useEffect(() => {
-    let roomRef = ref(db, `list/${uid}`)
+    let roomRef = dRef(db, `list/${uid}`)
       onValue(roomRef, data=>{
         setRoomData(data.val())
       })
     
-    let voteRef = ref(db, `vote_list/${uid}`)
+    let voteRef = dRef(db, `vote_list/${uid}`)
       onValue(voteRef, data=>{
         let arr = [];
         data.forEach(el=>{
@@ -65,7 +81,35 @@ function ViewCon({uid}) {
     scrollToBottom();
   }, [voteListData])
 
+  //이미지 리사이즈
+  const imageResize = async (file) => {
+    const options = {
+      maxWidthOrHeight:400,
+      fileType:file.type
+    }
+    try{
+      const compressedFile = await imageCompression(file, options);
+      const promise = imageCompression.getDataUrlFromFile(compressedFile);
+      return promise;
+    } catch (error) {
+      console.log(error)
+    }
+    
+  }
+  //base64 to file
+  const dataURLtoFile = (dataurl, fileName) => {
+      let arr = dataurl.split(','),
+          mime = arr[0].match(/:(.*?);/)[1],
+          bstr = atob(arr[1]), 
+          n = bstr.length, 
+          u8arr = new Uint8Array(n);
+      while(n--){
+          u8arr[n] = bstr.charCodeAt(n);
+      }
+      return new File([u8arr], fileName, {type:mime});
+  }
   const onFinish = (values) => {
+
     const linkRegex = /[\<\>\{\}\s]/g;
     values.title && values.title.replace(linkRegex,"")
     values.link = values.link ? values.link.replace(linkRegex,"") : ''
@@ -82,11 +126,54 @@ function ViewCon({uid}) {
       message.error('이미지주소 경로가 너무 깁니다.');
       return;
     }
-    runTransaction(ref(db,`list/${uid}/${userInfo.uid}`), pre => {
+    runTransaction(dRef(db,`list/${uid}/${userInfo.uid}`), pre => {
       if(pre && pre.submit_count && pre.submit_count >= roomData.max_vote){
         message.error(`최대 제안횟수를 초과했습니다.`);
         return;
       }else{
+
+        let files = values.upload;
+        values.image = [];
+        files.forEach(el=>{
+          let file = el.originFileObj;
+          const metadata = {contentType:file.type};
+          const storageRef = sRef(storage,'images/'+file.name);
+          
+          imageResize(file).then(data=>{
+            file = dataURLtoFile(data,file.name)
+          })
+          .then(()=>{
+            const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+            uploadTask.on('state_changed',
+              (snapshot) => {
+                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                switch (snapshot.state) {
+                  case 'paused':
+                    break;
+                  case 'running':
+                    break;
+                }
+              },
+              (error) => {
+                switch (error.code) {
+                  case 'storage/unauthorized':
+                    break;
+                  case 'storage/canceled':
+                    break;
+                  // ...
+                  case 'storage/unknown':
+                    break;
+                }
+              },
+              () => {
+                console.log(1)
+                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                  values.image = [...values.image,downloadURL]
+                })
+              }
+            )
+          })
+        })        
         onSubmit(values);
         closeSubmitPop();    
         let res = {
@@ -103,7 +190,10 @@ function ViewCon({uid}) {
 
   const onSubmit = (values) => {
     const date = getFormatDate(new Date());
-    const uid_ = uuid();
+    const uid_ = uuid();   
+
+
+    console.log(2)
     const val = {
       ...values,
       date,
@@ -111,9 +201,11 @@ function ViewCon({uid}) {
       user_uid:[{uid:userInfo.uid,name:userInfo.displayName}],
       vote_count:1
     }
-    set(ref(db,`vote_list/${uid}/${uid_}`),{
+    set(dRef(db,`vote_list/${uid}/${uid_}`),{
       ...val
     });
+
+
   }
 
   const onVote = (uid_,user_uid) => {
@@ -129,14 +221,14 @@ function ViewCon({uid}) {
       message.error('단일투표 입니다.');
       return;
     }
-    update(ref(db,`vote_list/${uid}/${uid_}`),{
+    update(dRef(db,`vote_list/${uid}/${uid_}`),{
       user_uid: [...user_uid,{uid:userInfo.uid,name:userInfo.displayName}]
     });
-    runTransaction(ref(db,`vote_list/${uid}/${uid_}/vote_count`),pre => {
+    runTransaction(dRef(db,`vote_list/${uid}/${uid_}/vote_count`),pre => {
       return pre ? ++pre : 1;
     });
 
-    runTransaction(ref(db,`list/${uid}/vote_user/${userInfo.uid}`), pre => {
+    runTransaction(dRef(db,`list/${uid}/vote_user/${userInfo.uid}`), pre => {
       let res = {
         ...pre,
         vote_count : pre && pre.vote_count ? pre.vote_count+1 : 1,
@@ -167,7 +259,7 @@ function ViewCon({uid}) {
   }
 
   const onVoteFinish = () => {
-    runTransaction(ref(db,`list/${uid}/ing`), pre => {
+    runTransaction(dRef(db,`list/${uid}/ing`), pre => {
       return false;
     })
     message.success('투표가 종료되었습니다.')
@@ -340,12 +432,23 @@ function ViewCon({uid}) {
           </Form.Item>
           }
           {roomData && roomData.add && roomData.add.includes('img') &&
-          <Form.Item
-            className={form.item}
-            name="img"
-          >
-            <Input placeholder="이미지주소" />
-          </Form.Item>
+          <>
+            <Form.Item
+              className={form.item}
+              name="img"
+            >
+              <Input placeholder="이미지주소" />
+            </Form.Item>          
+            <Form.Item
+              name="upload"
+              valuePropName="fileList"
+              getValueFromEvent={normFile}
+            >
+              <Upload name="logo" listType="picture">
+                <Button icon={<AiOutlineUpload />}>Click to upload</Button>
+              </Upload>
+            </Form.Item>
+          </>
           }
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
             제안하기
