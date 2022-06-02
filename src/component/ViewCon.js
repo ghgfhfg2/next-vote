@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from "react-redux";
-import { Form , Input, Button, message, Upload } from "antd";
+import { Form , Input, Button, message, Upload, Spin, Image } from "antd";
 import { db } from "src/firebase";
 import { get, ref as dRef, set, onValue, off, runTransaction, update, remove } from "firebase/database";
 import { getFormatDate } from "@component/CommonFunc";
 import uuid from "react-uuid"
 import style from "styles/view.module.css";
 import form from "styles/form.module.css";
-import { AiOutlineLike, AiOutlineUpload } from "react-icons/ai";
+import { AiOutlineLike, AiOutlineUpload, AiOutlineDelete } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
 import { IoIosArrowUp,IoIosArrowDown,IoIosList } from "react-icons/io";
 import { BiTargetLock } from "react-icons/bi";
@@ -29,8 +29,9 @@ const normFile = (e) => {
   return e?.fileList;
 };
 
-function ViewCon({uid}) {
 
+function ViewCon({uid}) {
+  const scrollBox = useRef();
   const formRef = useRef();
   const listRef = useRef([]);
   const voterRef = useRef([]);
@@ -74,17 +75,20 @@ function ViewCon({uid}) {
   
 
   const scrollToBottom = () => {
-    const h = document.body.scrollHeight
-    window.scrollTo(0,h);
+    scrollBox.current.scrollIntoView({block: "end"});
   }
   useEffect(() => {
     scrollToBottom();
   }, [voteListData])
 
+
   //이미지 리사이즈
-  const imageResize = async (file) => {
+  const imageResize = async (file,size) => {
+    if(file.type === 'image/svg+xml'){
+      return file;
+    }
     const options = {
-      maxWidthOrHeight:400,
+      maxWidthOrHeight:size,
       fileType:file.type
     }
     try{
@@ -108,8 +112,39 @@ function ViewCon({uid}) {
       }
       return new File([u8arr], fileName, {type:mime});
   }
-  const onFinish = (values) => {
 
+
+  const [clipImg, setClipImg] = useState([]);
+  const clipboard = (e) => {
+    
+    const date = new Date().getTime();
+    let fileObj = {};
+    if( e.type === 'paste' && !e.clipboardData.files[0]){
+      message.error('이미지가 아닙니다')
+      return
+    }
+
+    fileObj.file = e.type === 'paste' ? e.clipboardData.files[0] : e.target.files[0];
+    const fileType = fileObj.file.type;
+    if(fileType !== 'image/gif' && fileType !== 'image/png' && fileType !== 'image/jpg'){
+      message.error('지원하지않는 형식 입니다.')
+      return
+    }
+    fileObj.fileName = e.type === 'paste' ? `${date}_copyImage.png` : `${date}_${fileObj.file.name}`;
+    imageResize(fileObj.file,60).then(res=>{
+      fileObj.thumbnail = res;
+      setClipImg([...clipImg,fileObj])
+    })
+  }
+  const removeClipImg = (idx) => {
+    let arr = clipImg.concat();
+    arr.splice(idx,1);
+    setClipImg(arr)
+  }
+
+  const [submitLoading, setSubmitLoading] = useState(false)
+
+  const onFinish = (values) => {
     const linkRegex = /[\<\>\{\}\s]/g;
     values.title && values.title.replace(linkRegex,"")
     values.link = values.link ? values.link.replace(linkRegex,"") : ''
@@ -131,69 +166,68 @@ function ViewCon({uid}) {
         message.error(`최대 제안횟수를 초과했습니다.`);
         return;
       }else{
-
-        let files = values.upload;
-        values.image = [];
-        files.forEach(el=>{
-          let file = el.originFileObj;
-          const metadata = {contentType:file.type};
-          const storageRef = sRef(storage,'images/'+file.name);
+        setSubmitLoading(true);
+        let files = clipImg;
+        if(files.length > 0){
+          values.image = [];
+          files.forEach(el=>{
+            let file = el.file;
+            const metadata = {contentType:file.type};
+            const storageRef = sRef(storage,`images/${uid}/${el.fileName}`);
+            imageResize(file,400).then(data=>{     
+              file = dataURLtoFile(data,file.name)
+            })
+            .then(()=>{
+              const uploadTask = uploadBytesResumable(storageRef, file, metadata);
+              uploadTask.on('state_changed',
+                (snapshot) => {
+                  const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                  switch (snapshot.state) {
+                    case 'paused':
+                      break;
+                    case 'running':
+                      break;
+                  }
+                },
+                (error) => {
+                  switch (error.code) {
+                    case 'storage/unauthorized':
+                      break;
+                    case 'storage/canceled':
+                      break;
+                    // ...
+                    case 'storage/unknown':
+                      break;
+                  }
+                },
+                () => {
+                  getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+                    values.image = [...values.image,downloadURL]
+                    if(values.image.length === files.length){
+                      onSubmit(values);
+                    }
+                  })
+                }
+              )
+            })
+          })
+        }else{
+          onSubmit(values);
+        }
           
-          imageResize(file).then(data=>{
-            file = dataURLtoFile(data,file.name)
-          })
-          .then(()=>{
-            const uploadTask = uploadBytesResumable(storageRef, file, metadata);
-            uploadTask.on('state_changed',
-              (snapshot) => {
-                const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-                switch (snapshot.state) {
-                  case 'paused':
-                    break;
-                  case 'running':
-                    break;
-                }
-              },
-              (error) => {
-                switch (error.code) {
-                  case 'storage/unauthorized':
-                    break;
-                  case 'storage/canceled':
-                    break;
-                  // ...
-                  case 'storage/unknown':
-                    break;
-                }
-              },
-              () => {
-                console.log(1)
-                getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
-                  values.image = [...values.image,downloadURL]
-                })
-              }
-            )
-          })
-        })        
-        onSubmit(values);
-        closeSubmitPop();    
         let res = {
           ...pre,
           submit_count : pre && pre.submit_count ? pre.submit_count+1 : 1,
-        }
-        setTimeout(()=>{
-          scrollToBottom();
-        },10)
+        }        
         return res;
       }
     })
   };
 
   const onSubmit = (values) => {
+    values.upload = '';
     const date = getFormatDate(new Date());
     const uid_ = uuid();   
-
-
-    console.log(2)
     const val = {
       ...values,
       date,
@@ -204,8 +238,9 @@ function ViewCon({uid}) {
     set(dRef(db,`vote_list/${uid}/${uid_}`),{
       ...val
     });
-
-
+    closeSubmitPop();  
+    setSubmitLoading(false);
+    
   }
 
   const onVote = (uid_,user_uid) => {
@@ -251,7 +286,12 @@ function ViewCon({uid}) {
     formRef.current.setFieldsValue({
       title:'',
       link:''
-    });    
+    });  
+    setClipImg('');
+    setTimeout(()=>{
+      console.log('bottom')
+      scrollToBottom();
+    },500)  
   }
 
   const onOutView = () => {
@@ -288,7 +328,6 @@ function ViewCon({uid}) {
   }
 
   return <>
-    
     <div className={style.view_con_box}>
       <div className={style.ranking_box}>
         {roomData &&
@@ -337,7 +376,7 @@ function ViewCon({uid}) {
         )}
         </button>
       </div>
-      <ul className={style.vote_list}>
+      <ul className={style.vote_list} ref={scrollBox}>
         {voteListData && voteListData.map((el,idx)=>(
           <li
            key={idx}
@@ -353,10 +392,17 @@ function ViewCon({uid}) {
             <div className={style.con}>
               <div className={style.desc}>
                 <span className={style.vote_tit}>{el.title}</span>
-                {el.img &&
-                <span className={style.vote_link}>
-                  <img src={el.img} className={style.vote_img} alt={el.title} />
-                </span>
+                {el.image &&
+                <div className="vote_img_list">
+                  <Image.PreviewGroup>
+                    {el.image.map((src,idx)=>(
+                      <>
+                      <Image key={idx} className={style.vote_img} src={src} />
+                      </>
+                      ))
+                    }
+                  </Image.PreviewGroup>
+                </div>
                 }
                 {el.link &&
                 <span className={style.vote_link}>
@@ -408,7 +454,12 @@ function ViewCon({uid}) {
       {submitPop &&
         <div className={style.bg_box} onClick={closeSubmitPop}></div>
       }
-      <div ref={submitBox} className={style.submit_box}>        
+      <div ref={submitBox} className={style.submit_box}>
+        {submitLoading && 
+          <div className={style.loading_box}>
+            <Spin tip="Loading..."></Spin>
+          </div>
+        }        
         <Form
           name="basic"
           onFinish={onFinish}
@@ -433,21 +484,24 @@ function ViewCon({uid}) {
           }
           {roomData && roomData.add && roomData.add.includes('img') &&
           <>
-            <Form.Item
-              className={form.item}
-              name="img"
-            >
-              <Input placeholder="이미지주소" />
-            </Form.Item>          
-            <Form.Item
-              name="upload"
-              valuePropName="fileList"
-              getValueFromEvent={normFile}
-            >
-              <Upload name="logo" listType="picture">
-                <Button icon={<AiOutlineUpload />}>Click to upload</Button>
-              </Upload>
-            </Form.Item>
+            <div className={style.img_upload_box}>
+              <Input readOnly onPaste={clipboard} placeholder="복사한 이미지 붙여넣기" />
+              <div className={style.input_file}>
+                <input type="file" id="img_file" onChange={clipboard} /> 
+                <label for="img_file">
+                  <AiOutlineUpload />이미지 첨부
+                </label>
+              </div>
+            </div>  
+              {
+                clipImg && clipImg.map((el,idx)=>(
+                  <div className={style.img_upload_list} key={`${idx}_${el.fileName}`}>
+                    <img src={el.thumbnail} />
+                    <span>{el.fileName}</span>
+                    <button type='button' onClick={()=>removeClipImg(idx)}><AiOutlineDelete /></button>
+                  </div>
+                ))
+              }    
           </>
           }
           <Button type="primary" htmlType="submit" style={{ width: "100%" }}>

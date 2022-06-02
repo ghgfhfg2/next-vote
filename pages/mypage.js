@@ -9,11 +9,13 @@ import { ref, onValue, remove, get, off, update } from "firebase/database";
 import { Modal, Input, message, Menu, Dropdown } from 'antd';
 import ListUl from "../src/component/ListUl";
 import { IoSettingsOutline } from "react-icons/io5";
+import { getStorage, ref as sRef, deleteObject, listAll } from "firebase/storage";
 
 function Mypage() {
   const userInfo = useSelector((state) => state.user.currentUser);
   const dispatch = useDispatch();
   const router = useRouter();
+  const storage = getStorage();
 
   const [listData, setListData] = useState();
   useEffect(() => {
@@ -48,10 +50,24 @@ function Mypage() {
   }, [])
   
   const onDel = async (uid) => {
+    const listRef = sRef(storage,`images/${uid}`);
+    listAll(listRef)
+    .then(res=>{
+      res.items.forEach((itemRef) => {
+        deleteObject(itemRef).then(() => {
+          console.log('File deleted')
+          // File deleted successfully
+        }).catch((error) => {
+          console.error(error)
+          // Uh-oh, an error occurred!
+        });
+      });
+    })
+
     let roomId = await get(ref(db,`user/${userInfo.uid}/room`))
     .then(data => data.val() && data.val().indexOf(`${uid}`))
     roomId && remove(ref(db,`user/${userInfo.uid}/room/${roomId}`))
-    
+
     get(ref(db,`vote_list/${uid}`))
     .then(data=>{
       if(data.val()){

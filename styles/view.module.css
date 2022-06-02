@@ -91,11 +91,12 @@
   max-width: 1000px;
   margin-bottom: 0;
   flex: 1;
-  padding: 0 1rem; }
+  padding: 0 1rem;
+  padding-bottom: 40px; }
 
 .vote_list li {
   width: 100%;
-  margin: 1rem 0;
+  margin-top: 2rem;
   display: flex;
   justify-content: flex-start;
   align-items: center;
@@ -161,6 +162,88 @@
   transition: 0.3s;
   background-color: #fff;
   box-shadow: 0 -1px 4px rgba(0, 0, 0, 0.2); }
+
+.img_upload_box {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  margin-bottom: 10px;
+  align-items: stretch; }
+
+.img_upload_list {
+  width: 100%;
+  margin: 10px 0;
+  border: 1px solid #ddd;
+  padding: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  color: #888;
+  font-size: 12px; }
+
+.img_upload_list img {
+  margin-right: 10px;
+  max-width: 60px; }
+
+.img_upload_list span {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden; }
+
+.img_upload_list button {
+  margin-left: auto;
+  border: 0;
+  background-color: #fff;
+  font-size: 16px;
+  padding: 7px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
+
+.input_file {
+  flex-shrink: 0;
+  margin-left: 10px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  width: 40%; }
+
+.input_file input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  opacity: 0; }
+
+.input_file input + label {
+  border: 1px solid #ddd;
+  height: 100%;
+  font-family: 'Dongle';
+  font-size: 20px;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  width: 100%;
+  justify-content: center;
+  cursor: pointer; }
+
+.loading_box {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.7);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row; }
 
 .bg_box {
   width: 100vw;

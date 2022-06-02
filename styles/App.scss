@@ -252,6 +252,19 @@ footer.footer{
 }
 
 
+.vote_img_list{
+  @include flex();margin-top: 10px;
+  flex-wrap: wrap;
+}
+.vote_img_list .ant-image{width: 60px;margin-right: 5px;margin-top: 5px;}
+.vote_img_list .ant-image-mask-info{position: relative;font-size: 0;height: 100%;width: 100%;}
+.vote_img_list .ant-image-mask-info span{font-size: 24px;}
+.vote_img_list .ant-image-mask-info svg{
+  position: absolute;left:50%;top:50%;
+  font-size: 20px;
+  transform: translate(-50%,-50%);
+}
+
 //mypage
 .mypage_box{
   .profile_box{padding:1rem;

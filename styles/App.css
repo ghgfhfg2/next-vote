@@ -334,6 +334,35 @@ footer.footer a svg {
 .list_tab button.on {
   border-bottom-color: #1890ff; }
 
+.vote_img_list {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  margin-top: 10px;
+  flex-wrap: wrap; }
+
+.vote_img_list .ant-image {
+  width: 60px;
+  margin-right: 5px;
+  margin-top: 5px; }
+
+.vote_img_list .ant-image-mask-info {
+  position: relative;
+  font-size: 0;
+  height: 100%;
+  width: 100%; }
+
+.vote_img_list .ant-image-mask-info span {
+  font-size: 24px; }
+
+.vote_img_list .ant-image-mask-info svg {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-size: 20px;
+  transform: translate(-50%, -50%); }
+
 .mypage_box .profile_box {
   padding: 1rem;
   border-bottom: 10px solid #f1f1f1; }
