@@ -73,6 +73,7 @@ function Regist() {
             type: 1 ,
             sender: 1,
             voter: 1,
+            cancel: 2,
             room_open: 1,
             password: '',
             max_vote: 1,
@@ -102,7 +103,7 @@ function Regist() {
           >
             <Checkbox.Group>
               <Checkbox value="link">외부링크</Checkbox>
-              <Checkbox value="img">이미지(이미지 주소)</Checkbox>
+              <Checkbox value="img">이미지</Checkbox>
             </Checkbox.Group>
           </Form.Item>
           <Form.Item
@@ -112,6 +113,15 @@ function Regist() {
             <Radio.Group size="large">
               <Radio.Button value={1}>단일투표</Radio.Button>
               <Radio.Button value={2}>중복투표</Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+          <Form.Item
+            label="투표취소"
+            name="cancel"
+          >
+            <Radio.Group size="large">
+              <Radio.Button value={1}>가능</Radio.Button>
+              <Radio.Button value={2}>불가능</Radio.Button>
             </Radio.Group>
           </Form.Item>
           <Form.Item

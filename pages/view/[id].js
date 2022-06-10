@@ -43,7 +43,7 @@ export default function View() {
           joinMember = [...joinMember,user.uid]
         })
       })
-      joinMember.includes(`${userInfo.uid}`) ? setIsJoin(true) : null;
+      userInfo && userInfo.uid && joinMember.includes(`${userInfo.uid}`) ? setIsJoin(true) : null;
     })
 
     runTransaction(ref(db, `list/${uid}/join_count`), pre => {

@@ -7,7 +7,7 @@ import { getFormatDate } from "@component/CommonFunc";
 import uuid from "react-uuid"
 import style from "styles/view.module.css";
 import form from "styles/form.module.css";
-import { AiOutlineLike, AiOutlineUpload, AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineLike, AiTwotoneLike, AiOutlineUpload, AiOutlineDelete } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
 import { IoIosArrowUp,IoIosArrowDown,IoIosList } from "react-icons/io";
 import { BiTargetLock } from "react-icons/bi";
@@ -19,10 +19,11 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
+import KakaoShareButton from './KakaoShareButton';
+
 const storage = getStorage();
 
 const normFile = (e) => {
-  console.log('Upload event:', e);
   if (Array.isArray(e)) {
     return e;
   }
@@ -31,6 +32,16 @@ const normFile = (e) => {
 
 
 function ViewCon({uid}) {
+  useEffect(() => {
+    const script = document.createElement('script')
+    script.src = 'https://developers.kakao.com/sdk/js/kakao.js'
+    script.async = true
+    document.body.appendChild(script)
+    return () => {
+      document.body.removeChild(script)
+    }    
+  }, [])
+
   const scrollBox = useRef();
   const formRef = useRef();
   const listRef = useRef([]);
@@ -47,8 +58,8 @@ function ViewCon({uid}) {
       onValue(roomRef, data=>{
         setRoomData(data.val())
       })
-    
-    let voteRef = dRef(db, `vote_list/${uid}`)
+      
+      let voteRef = dRef(db, `vote_list/${uid}`)
       onValue(voteRef, data=>{
         let arr = [];
         data.forEach(el=>{
@@ -57,6 +68,14 @@ function ViewCon({uid}) {
             uid:el.key
           })
         });     
+        if(userInfo){
+          arr.forEach(list=>{
+            let check = list.user_uid.find(user=>{
+              return user.uid === userInfo.uid
+            })
+            list.already_check = check ? true : false;
+          })
+        } 
         arr.sort((a,b)=>{
           return a.date.timestamp - b.date.timestamp;
         })
@@ -126,7 +145,7 @@ function ViewCon({uid}) {
 
     fileObj.file = e.type === 'paste' ? e.clipboardData.files[0] : e.target.files[0];
     const fileType = fileObj.file.type;
-    if(fileType !== 'image/gif' && fileType !== 'image/png' && fileType !== 'image/jpg'){
+    if(fileType !== 'image/gif' && fileType !== 'image/png' && fileType !== 'image/jpeg'){
       message.error('지원하지않는 형식 입니다.')
       return
     }
@@ -232,6 +251,7 @@ function ViewCon({uid}) {
       ...values,
       date,
       user_name:userInfo.displayName,
+      vote_user:userInfo.uid,
       user_uid:[{uid:userInfo.uid,name:userInfo.displayName}],
       vote_count:1
     }
@@ -243,33 +263,71 @@ function ViewCon({uid}) {
     
   }
 
-  const onVote = (uid_,user_uid) => {
-    let uidArr = [];
+  const onVote = (uid_,user_uid,vote_userId,already) => {
+    let uidArr = [];    
     user_uid.map(user => {
       uidArr.push(user.uid)
     })
-    if(uidArr.includes(userInfo.uid)){
-      message.error('이미 투표한 의견입니다.');
-      return
-    }
-    if(roomData.type === 1 && roomData.vote_user && roomData.vote_user[userInfo.uid] && roomData.vote_user[userInfo.uid].vote_count >= 1){
-      message.error('단일투표 입니다.');
-      return;
-    }
-    update(dRef(db,`vote_list/${uid}/${uid_}`),{
-      user_uid: [...user_uid,{uid:userInfo.uid,name:userInfo.displayName}]
-    });
-    runTransaction(dRef(db,`vote_list/${uid}/${uid_}/vote_count`),pre => {
-      return pre ? ++pre : 1;
-    });
-
-    runTransaction(dRef(db,`list/${uid}/vote_user/${userInfo.uid}`), pre => {
-      let res = {
-        ...pre,
-        vote_count : pre && pre.vote_count ? pre.vote_count+1 : 1,
+    if(roomData.cancel === 2){
+      if(uidArr.includes(userInfo.uid)){
+        message.error('이미 투표한 의견입니다.');
+        return
       }
-      return res;
-    });
+      if(roomData.type === 1 && roomData.vote_user && roomData.vote_user[userInfo.uid] && roomData.vote_user[userInfo.uid].vote_count >= 1){
+        message.error('단일투표 입니다.');
+        return;
+      }
+      update(dRef(db,`vote_list/${uid}/${uid_}`),{
+        user_uid: [...user_uid,{uid:userInfo.uid,name:userInfo.displayName}]
+      });
+      runTransaction(dRef(db,`vote_list/${uid}/${uid_}/vote_count`),pre => {
+        return pre ? ++pre : 1;
+      });
+  
+      runTransaction(dRef(db,`list/${uid}/vote_user/${userInfo.uid}`), pre => {
+        let res = {
+          ...pre,
+          vote_count : pre && pre.vote_count ? pre.vote_count+1 : 1,
+        }
+        return res;
+      });
+    }else if(already){      
+      if(userInfo.uid === vote_userId){
+        message.error('본인제안은 투표 취소할 수 없습니다.')
+        return
+      }else{
+        let newUser = user_uid.filter(el=>el.uid !== userInfo.uid);
+        update(dRef(db,`vote_list/${uid}/${uid_}`),{
+          user_uid: [...newUser]
+        });
+        runTransaction(dRef(db,`vote_list/${uid}/${uid_}/vote_count`),pre => {
+          return pre ? --pre : 0;
+        });
+    
+        runTransaction(dRef(db,`list/${uid}/vote_user/${userInfo.uid}`), pre => {
+          let res = {
+            ...pre,
+            vote_count : pre && pre.vote_count ? pre.vote_count-1 : 0,
+          }
+          return res;
+        });
+      }
+    }else{
+      update(dRef(db,`vote_list/${uid}/${uid_}`),{
+        user_uid: [...user_uid,{uid:userInfo.uid,name:userInfo.displayName}]
+      });
+      runTransaction(dRef(db,`vote_list/${uid}/${uid_}/vote_count`),pre => {
+        return pre ? ++pre : 1;
+      });
+  
+      runTransaction(dRef(db,`list/${uid}/vote_user/${userInfo.uid}`), pre => {
+        let res = {
+          ...pre,
+          vote_count : pre && pre.vote_count ? pre.vote_count+1 : 1,
+        }
+        return res;
+      });      
+    }
   }
 
   const submitBox = useRef()
@@ -340,15 +398,21 @@ function ViewCon({uid}) {
               <li>{`${roomData.max_vote}회 제안가능`}</li>
               <li>{roomData.sender === 1 ? `제안자공개` : `제안자비공개`}</li>
               <li>{roomData.voter === 1 ? `투표자공개` : `투표자비공개`}</li>
+              <li>{roomData.cancel === 1 ? `투표 취소가능` : `투표 취소불가`}</li>
               <li>{roomData.room_open === 1 ? `공개방` : `비공개방`}</li>
               {roomData.add.includes('link') && <li>링크</li>}
               {roomData.add.includes('img') && <li>이미지</li>}
             </ul>
-            <h2>{roomData.title}</h2>
+            <h2>
+              {roomData.title}              
+            </h2>
           </div>
-          <button type="button" className={style.room_out} onClick={onOutView}>
-            <IoExitOutline />
-          </button>
+          <div className={style.room_top_right}>
+            <button type="button" className={style.room_out} onClick={onOutView}>
+              <IoExitOutline />
+            </button>
+            <KakaoShareButton roomData={roomData} />
+          </div>
         </div>
         }
         {voteListData && voteListData.length > 0 && rankView &&
@@ -384,7 +448,7 @@ function ViewCon({uid}) {
            data-uid={el.uid}
           >
             <div className={style.profile}>
-              {roomData.sender && roomData.sender === 1 &&
+              {roomData && roomData.sender && roomData.sender === 1 &&
                 <span>{el.user_name}</span>
               }
               <span className={style.date}>{`${el.date.hour}:${el.date.min}`}</span>
@@ -416,7 +480,17 @@ function ViewCon({uid}) {
                   <span className={style.count}>
                     {el.vote_count > 0 ? <>{el.vote_count}</> : `0`}
                   </span>
-                  <Button className={style.btn_vote} onClick={()=>{onVote(el.uid,el.user_uid)}}><AiOutlineLike className={style.ic_vote} /></Button>
+                  {userInfo && 
+                  <Button className={style.btn_vote} onClick={()=>{onVote(el.uid,el.user_uid,el.vote_user,el.already_check)}}>
+                    
+                    {el.already_check ? (
+                      <AiTwotoneLike className={style.ic_vote} />
+                    ) : (
+                      <AiOutlineLike className={style.ic_vote} />
+                    )
+                    }
+                  </Button>
+                  }
                 </div>
                 }
                 {roomData && roomData.voter === 1 && 
@@ -441,7 +515,7 @@ function ViewCon({uid}) {
       {roomData && roomData.ing ? (
         <div className={style.btn_open_box}>
         <button type="button" className={style.btn_open} onClick={onSubmitPop}>의견제안</button>
-        {roomData && roomData.host === userInfo.uid &&
+        {roomData && userInfo && roomData.host === userInfo.uid &&
           <button type="button" className={style.btn_finish} onClick={onVoteFinish}>투표종료</button>
         }
         </div>
@@ -485,7 +559,7 @@ function ViewCon({uid}) {
           {roomData && roomData.add && roomData.add.includes('img') &&
           <>
             <div className={style.img_upload_box}>
-              <Input readOnly onPaste={clipboard} placeholder="복사한 이미지 붙여넣기" />
+              <Input onPaste={clipboard} placeholder="복사한 이미지 붙여넣기" />
               <div className={style.input_file}>
                 <input type="file" id="img_file" onChange={clipboard} /> 
                 <label for="img_file">

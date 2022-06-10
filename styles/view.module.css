@@ -322,9 +322,10 @@
 
 .room_data {
   background-color: #fff;
+  position: relative;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
+  align-items: stretch;
   flex-direction: row; }
 
 .room_left {
@@ -337,12 +338,16 @@
   padding: 0.6rem 1rem; }
 
 .room_left h2 {
-  text-align: left;
   font-size: 16px;
   margin-right: 15px;
   margin-bottom: 0;
   font-weight: 700;
-  line-height: 1.4; }
+  line-height: 1.4;
+  display: block;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row; }
 
 .room_info {
   font-size: 11px;
@@ -364,9 +369,15 @@
   line-height: 1;
   flex-shrink: 0; }
 
-.room_out {
+.room_top_right {
   margin-left: auto;
-  margin-right: 0.6rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-direction: column;
+  padding: 10px 4px 5px 0; }
+
+.room_out {
   cursor: pointer;
   border: none;
   background: none;
@@ -378,6 +389,11 @@
 
 .room_out svg {
   font-size: 22px; }
+
+.btn_kakao {
+  background: none;
+  border: 0;
+  padding: 5px; }
 
 .right_con {
   display: flex;

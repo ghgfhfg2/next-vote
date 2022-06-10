@@ -9,7 +9,13 @@
       "**/.*",
       "**/node_modules/**"
     ],
-    "cleanUrls": true
+    "cleanUrls": true,
+    "rewrites": [
+      {
+        "destination": "/view/[id].html",  
+        "regex": "^/view/([^/]+?)(?:/)?$"
+      }
+    ]
   },
   "database": {
     "rules": "database.rules.json"
