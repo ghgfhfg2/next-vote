@@ -7,8 +7,9 @@ import { getFormatDate } from "@component/CommonFunc";
 import uuid from "react-uuid"
 import style from "styles/view.module.css";
 import form from "styles/form.module.css";
-import { AiOutlineLike, AiTwotoneLike, AiOutlineUpload, AiOutlineDelete } from "react-icons/ai";
+import { AiOutlineLike, AiTwotoneLike, AiOutlineUpload, AiOutlineDelete, AiOutlineTrophy } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
+import { FiExternalLink } from "react-icons/fi";
 import { IoIosArrowUp,IoIosArrowDown,IoIosList } from "react-icons/io";
 import { BiTargetLock } from "react-icons/bi";
 import {useRouter} from 'next/router';
@@ -32,7 +33,9 @@ const normFile = (e) => {
 
 
 function ViewCon({uid}) {
+  const [domWid, setDomWid] = useState()
   useEffect(() => {
+    setDomWid(document.body.clientWidth)
     const script = document.createElement('script')
     script.src = 'https://developers.kakao.com/sdk/js/kakao.js'
     script.async = true
@@ -50,12 +53,16 @@ function ViewCon({uid}) {
   
   const userInfo = useSelector((state) => state.user.currentUser);
   const [roomData, setRoomData] = useState();
+  const [finishVote, setFinishVote] = useState(false)
   const [voteListData, setVoteListData] = useState();
 
   const [ranking, setRanking] = useState([]);
   useEffect(() => {
     let roomRef = dRef(db, `list/${uid}`)
       onValue(roomRef, data=>{
+        if(!data.val().ing){
+          setFinishVote(true)
+        }
         setRoomData(data.val())
       })
       
@@ -347,7 +354,6 @@ function ViewCon({uid}) {
     });  
     setClipImg('');
     setTimeout(()=>{
-      console.log('bottom')
       scrollToBottom();
     },500)  
   }
@@ -356,11 +362,17 @@ function ViewCon({uid}) {
     router.back()
   }
 
+  
   const onVoteFinish = () => {
     runTransaction(dRef(db,`list/${uid}/ing`), pre => {
+      setFinishVote(true)
       return false;
     })
     message.success('투표가 종료되었습니다.')
+  }
+
+  const finishPopClose = () => {
+    setFinishVote(false)
   }
 
   const onMoveList = (uid) => {
@@ -386,7 +398,40 @@ function ViewCon({uid}) {
   }
 
   return <>
-    <div className={style.view_con_box}>
+    <div className={style.view_con_box} style={{'--domWid':`${domWid}px`}}>
+        {ranking.length > 0 && finishVote &&
+          <div className={style.view_finish_pop}>
+            <article className={style.view_finish_con}>
+              <div className={style.view_finish_txt}>1위로 선정된 제안 <AiOutlineTrophy /></div>
+              <dl>
+                <dt>
+                  {ranking[0].title}
+                </dt>
+                <dd>
+                  {ranking[0].image &&
+                  <div className="vote_img_list">
+                    <Image.PreviewGroup>
+                      {ranking[0].image.map((src,idx)=>(
+                        <>
+                        <Image key={idx} className={style.vote_img} src={src} />
+                        </>
+                        ))
+                      }
+                    </Image.PreviewGroup>
+                  </div>
+                  }
+                  {ranking[0].link &&
+                    <span className={style.vote_link}>
+                      <a href={ranking[0].link} target="_blank">링크이동<FiExternalLink /></a>
+                    </span>
+                  }
+                </dd>
+              </dl>
+            </article>
+            <div className={style.view_finish_bg} onClick={finishPopClose}>
+            </div>
+          </div>
+        }
       <div className={style.ranking_box}>
         {roomData &&
         <div className={style.room_data}>
@@ -454,7 +499,7 @@ function ViewCon({uid}) {
               <span className={style.date}>{`${el.date.hour}:${el.date.min}`}</span>
             </div>
             <div className={style.con}>
-              <div className={style.desc}>
+              <div className={style.desc} style={roomData?.ing ? {marginRight:"10px"} : {}}>
                 <span className={style.vote_tit}>{el.title}</span>
                 {el.image &&
                 <div className="vote_img_list">
@@ -470,7 +515,7 @@ function ViewCon({uid}) {
                 }
                 {el.link &&
                 <span className={style.vote_link}>
-                  <a href={el.link} target="_blank">{el.link}</a>
+                  <a href={el.link} target="_blank">링크이동<FiExternalLink /></a>
                 </span>
                 }                
               </div>

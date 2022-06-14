@@ -59,9 +59,7 @@ function App({ Component, pageProps }) {
         }
         {authCheck ? (
             <>
-            <AppLayout>
               <Component {...pageProps} />
-            </AppLayout>
             {!path.includes('/view') && 
               <>
               <div className="empty_box"></div>

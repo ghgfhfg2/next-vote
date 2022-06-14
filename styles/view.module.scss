@@ -1,4 +1,59 @@
 @import 'scss-common.scss';
+.view_finish_pop{
+  position: fixed;left: 50%;top:0;
+  width: var(--domWid);height: 100%;
+  transform: translateX(-50%);
+  z-index: 100;
+  @include flex($j:center);
+  animation: fade_in 0.3s forwards;
+  opacity: 0;
+}
+@keyframes fade_in {
+  to{opacity: 1;}
+}
+.view_finish_bg{
+  position: absolute;left: 0;top:0;
+  width: 100%;height: 100%;
+  background-color: rgba(0,0,0,0.3);
+}
+.view_finish_txt{
+  position: absolute;
+  top: 0;left: 0;width: 100%;
+  padding:10px;
+  text-align: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  background-color: #111;
+  color: #fff;
+  svg{
+    position: relative;top:2px;
+  }
+}
+.view_finish_con{
+  min-width: 300px;
+  max-width: calc(var(--domWid) - 40px);
+  position: relative;z-index: 10;
+  padding:1.5rem;padding-top: 55px;
+  border-radius: 15px;
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0,0,0,0.5);
+  dl{
+    @include flex($d:column);
+  }
+  dd{
+    margin-top: 10px;
+    @include flex($d:column);
+  }
+  animation: fade_up 0.3s forwards;
+  opacity: 0;
+  transform: translateY(35px);
+}
+@keyframes fade_up {
+  to{opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .view_con_box{
   @include flex($d:column);
   width: 100%;
@@ -6,6 +61,7 @@
   background-color: rgb(53, 57, 75);
   overflow: auto;
   padding-bottom: 40px;
+  position: relative;
 }
 .ranking_box{
   width: 100%;  
@@ -80,7 +136,7 @@
     flex-shrink: 0;
     @include flex($d:column,$a:flex-end);
     font-size: 12px;
-    .date{color: #a1a1a1;font-size: 11px;}
+    .date{color: #a1a1a1;font-size: 11px;display: block;margin-top: 5px;}
   }
   .con{
     flex:1;
@@ -177,12 +233,18 @@
   }
 }
 
-.desc{
-  margin-right: 1rem;
+.desc{  
   @include flex($d:column,$a:flex-start);
   flex:1;
 }
-.vote_link{margin-top: 5px;word-break: break-all;line-height: 1.2;}
+.vote_link{
+  margin-top: 10px;
+  font-size: 13px;
+  width: 100%;
+  a{@include flex($j:center);width: 100%;padding:10px;border: 1px solid #ddd;text-align: center;}
+  svg{margin-left: 5px;position: relative;top:2px}
+
+}
 .vote_img{max-width: 100%}
 .room_data{
   background-color: #fff;position: relative;
@@ -190,7 +252,7 @@
 }
 .room_left{
   @include flex($d:column,$a:flex-start);
-  flex-wrap: wrap;
+  flex-wrap: wrap;  
   background-color: #fff;
   padding:0.6rem 1rem;
   h2{font-size: 16px;margin-right: 15px;margin-bottom: 0;font-weight: 700;line-height: 1.4;
