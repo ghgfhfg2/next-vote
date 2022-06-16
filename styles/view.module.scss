@@ -33,16 +33,18 @@
   min-width: 300px;
   max-width: calc(var(--domWid) - 40px);
   position: relative;z-index: 10;
-  padding:1.5rem;padding-top: 55px;
+  padding:1.5rem;padding-top: 55px;padding-bottom: 1rem;
   border-radius: 15px;
   background-color: #fff;
   box-shadow: 0 0 10px rgba(0,0,0,0.5);
   dl{
     @include flex($d:column);
+    margin-bottom: 0;
   }
   dd{
     margin-top: 10px;
     @include flex($d:column);
+    margin-bottom: 0;
   }
   animation: fade_up 0.3s forwards;
   opacity: 0;

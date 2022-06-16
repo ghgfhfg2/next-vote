@@ -55,6 +55,7 @@ function ViewCon({uid}) {
   const [roomData, setRoomData] = useState();
   const [finishVote, setFinishVote] = useState(false)
   const [voteListData, setVoteListData] = useState();
+  const [listLength, setListLength] = useState()
 
   const [ranking, setRanking] = useState([]);
   useEffect(() => {
@@ -75,6 +76,7 @@ function ViewCon({uid}) {
             uid:el.key
           })
         });     
+        
         if(userInfo){
           arr.forEach(list=>{
             let check = list.user_uid.find(user=>{
@@ -86,6 +88,9 @@ function ViewCon({uid}) {
         arr.sort((a,b)=>{
           return a.date.timestamp - b.date.timestamp;
         })
+        setListLength(prev=>{
+          return prev === arr.length ? prev : arr.length
+        })
         setVoteListData(arr)
         let rankArr = arr.concat();
         rankArr = rankArr.sort((a,b)=>{
@@ -96,7 +101,7 @@ function ViewCon({uid}) {
     return () => {
       off(voteRef)
     };
-  }, []);
+  }, [userInfo]);
 
   
 
@@ -104,8 +109,9 @@ function ViewCon({uid}) {
     scrollBox.current.scrollIntoView({block: "end"});
   }
   useEffect(() => {
+    console.log(11)
     scrollToBottom();
-  }, [voteListData])
+  }, [listLength])
 
 
   //이미지 리사이즈

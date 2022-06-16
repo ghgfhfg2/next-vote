@@ -21,7 +21,7 @@ function ListUl({listData, onDel, userUid}) {
               <span className={style.state_end}></span>
             )}
             <Link href="/view/[id]" as={`/view/${el.uid}`}>
-            <a className={style.a} key={idx} >
+            <a className={style.a}>
               <dl>
                 <dt>
                   <span className={style.tit}>{el.title}

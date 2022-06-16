@@ -108,6 +108,9 @@ section {
 body {
   line-height: 1; }
 
+body dl, body ol, body ul {
+  margin-bottom: 0; }
+
 ol,
 ul {
   list-style: none; }

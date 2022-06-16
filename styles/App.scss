@@ -103,11 +103,15 @@ section {
   display: block; }
 
 body {
-  line-height: 1; }
+  line-height: 1; 
+
+  dl, ol, ul{margin-bottom: 0;}
+}
 
 ol,
 ul {
   list-style: none; }
+
 
 blockquote,
 q {
