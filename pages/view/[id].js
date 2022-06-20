@@ -45,10 +45,11 @@ export default function View() {
       })
       userInfo && userInfo.uid && joinMember.includes(`${userInfo.uid}`) ? setIsJoin(true) : null;
     })
-
-    runTransaction(ref(db, `list/${uid}/join_count`), pre => {
-      return pre ? pre+1 : 1;
-    })
+    if(uid){
+      runTransaction(ref(db, `list/${uid}/join_count`), pre => {
+        return pre ? pre+1 : 1;
+      })
+    }
 
     return () => {
       off(listRef)

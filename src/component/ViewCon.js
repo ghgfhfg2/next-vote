@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useDispatch, useSelector } from "react-redux";
-import { Form , Input, Button, message, Upload, Spin, Image } from "antd";
+import { useSelector } from "react-redux";
+import { Button, message,Spin, Image } from "antd";
 import { db } from "src/firebase";
-import { get, ref as dRef, set, onValue, off, runTransaction, update, remove } from "firebase/database";
+import { ref as dRef, set, onValue, off, runTransaction, update } from "firebase/database";
 import { getFormatDate } from "@component/CommonFunc";
 import uuid from "react-uuid"
 import style from "styles/view.module.css";
-import form from "styles/form.module.css";
-import { AiOutlineLike, AiTwotoneLike, AiOutlineUpload, AiOutlineDelete, AiOutlineTrophy } from "react-icons/ai";
-import { IoExitOutline } from "react-icons/io5";
+import { AiOutlineLike, AiTwotoneLike, AiOutlineTrophy } from "react-icons/ai";
+
 import { FiExternalLink } from "react-icons/fi";
 import { IoIosArrowUp,IoIosArrowDown,IoIosList } from "react-icons/io";
 import { BiTargetLock } from "react-icons/bi";
@@ -20,16 +19,11 @@ import {
   uploadBytesResumable,
   getDownloadURL,
 } from "firebase/storage";
-import KakaoShareButton from './KakaoShareButton';
+
+import SubmitForm from './view/SubmitForm';
+import RoomInfo from './view/RoomInfo';
 
 const storage = getStorage();
-
-const normFile = (e) => {
-  if (Array.isArray(e)) {
-    return e;
-  }
-  return e?.fileList;
-};
 
 
 function ViewCon({uid}) {
@@ -109,7 +103,6 @@ function ViewCon({uid}) {
     scrollBox.current.scrollIntoView({block: "end"});
   }
   useEffect(() => {
-    console.log(11)
     scrollToBottom();
   }, [listLength])
 
@@ -147,32 +140,7 @@ function ViewCon({uid}) {
 
 
   const [clipImg, setClipImg] = useState([]);
-  const clipboard = (e) => {
-    
-    const date = new Date().getTime();
-    let fileObj = {};
-    if( e.type === 'paste' && !e.clipboardData.files[0]){
-      message.error('이미지가 아닙니다')
-      return
-    }
 
-    fileObj.file = e.type === 'paste' ? e.clipboardData.files[0] : e.target.files[0];
-    const fileType = fileObj.file.type;
-    if(fileType !== 'image/gif' && fileType !== 'image/png' && fileType !== 'image/jpeg'){
-      message.error('지원하지않는 형식 입니다.')
-      return
-    }
-    fileObj.fileName = e.type === 'paste' ? `${date}_copyImage.png` : `${date}_${fileObj.file.name}`;
-    imageResize(fileObj.file,60).then(res=>{
-      fileObj.thumbnail = res;
-      setClipImg([...clipImg,fileObj])
-    })
-  }
-  const removeClipImg = (idx) => {
-    let arr = clipImg.concat();
-    arr.splice(idx,1);
-    setClipImg(arr)
-  }
 
   const [submitLoading, setSubmitLoading] = useState(false)
 
@@ -364,6 +332,33 @@ function ViewCon({uid}) {
     },500)  
   }
 
+  const clipboard = (e) => {
+    
+    const date = new Date().getTime();
+    let fileObj = {};
+    if( e.type === 'paste' && !e.clipboardData.files[0]){
+      message.error('이미지가 아닙니다')
+      return
+    }
+
+    fileObj.file = e.type === 'paste' ? e.clipboardData.files[0] : e.target.files[0];
+    const fileType = fileObj.file.type;
+    if(fileType !== 'image/gif' && fileType !== 'image/png' && fileType !== 'image/jpeg'){
+      message.error('지원하지않는 형식 입니다.')
+      return
+    }
+    fileObj.fileName = e.type === 'paste' ? `${date}_copyImage.png` : `${date}_${fileObj.file.name}`;
+    imageResize(fileObj.file,60).then(res=>{
+      fileObj.thumbnail = res;
+      setClipImg([...clipImg,fileObj])
+    })
+  }
+  const removeClipImg = (idx) => {
+    let arr = clipImg.concat();
+    arr.splice(idx,1);
+    setClipImg(arr)
+  }    
+
   const onOutView = () => {
     router.back()
   }
@@ -440,31 +435,7 @@ function ViewCon({uid}) {
         }
       <div className={style.ranking_box}>
         {roomData &&
-        <div className={style.room_data}>
-          <div className={style.room_left}>
-            <ul className={style.room_info}>
-              <li>
-                {roomData.type === 1 ? `단일투표` : `중복투표`}
-              </li>
-              <li>{`${roomData.max_vote}회 제안가능`}</li>
-              <li>{roomData.sender === 1 ? `제안자공개` : `제안자비공개`}</li>
-              <li>{roomData.voter === 1 ? `투표자공개` : `투표자비공개`}</li>
-              <li>{roomData.cancel === 1 ? `투표 취소가능` : `투표 취소불가`}</li>
-              <li>{roomData.room_open === 1 ? `공개방` : `비공개방`}</li>
-              {roomData.add.includes('link') && <li>링크</li>}
-              {roomData.add.includes('img') && <li>이미지</li>}
-            </ul>
-            <h2>
-              {roomData.title}              
-            </h2>
-          </div>
-          <div className={style.room_top_right}>
-            <button type="button" className={style.room_out} onClick={onOutView}>
-              <IoExitOutline />
-            </button>
-            <KakaoShareButton roomData={roomData} />
-          </div>
-        </div>
+          <RoomInfo roomData={roomData} onOutView={onOutView} />
         }
         {voteListData && voteListData.length > 0 && rankView &&
         <ul className={style.ranking}>
@@ -585,54 +556,7 @@ function ViewCon({uid}) {
             <Spin tip="Loading..."></Spin>
           </div>
         }        
-        <Form
-          name="basic"
-          onFinish={onFinish}
-          autoComplete="off"
-          className={form.form}
-          ref={formRef}
-        >
-          <Form.Item
-            className={form.item}
-            name="title"
-            rules={[{ required: true, message: "제목은 필수입니다." }]}
-          >
-            <Input placeholder="제목" />
-          </Form.Item>
-          {roomData && roomData.add && roomData.add.includes('link') &&
-          <Form.Item
-            className={form.item}
-            name="link"
-          >
-            <Input placeholder="링크주소" />
-          </Form.Item>
-          }
-          {roomData && roomData.add && roomData.add.includes('img') &&
-          <>
-            <div className={style.img_upload_box}>
-              <Input onPaste={clipboard} placeholder="복사한 이미지 붙여넣기" />
-              <div className={style.input_file}>
-                <input type="file" id="img_file" onChange={clipboard} /> 
-                <label for="img_file">
-                  <AiOutlineUpload />이미지 첨부
-                </label>
-              </div>
-            </div>  
-              {
-                clipImg && clipImg.map((el,idx)=>(
-                  <div className={style.img_upload_list} key={`${idx}_${el.fileName}`}>
-                    <img src={el.thumbnail} />
-                    <span>{el.fileName}</span>
-                    <button type='button' onClick={()=>removeClipImg(idx)}><AiOutlineDelete /></button>
-                  </div>
-                ))
-              }    
-          </>
-          }
-          <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
-            제안하기
-          </Button>
-        </Form>
+        <SubmitForm onFinish={onFinish} roomData={roomData} formRef={formRef} imageResize={imageResize} removeClipImg={removeClipImg} clipImg={clipImg} clipboard={clipboard} />
       </div>
     </div>
   </>;
