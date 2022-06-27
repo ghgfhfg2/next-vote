@@ -376,3 +376,17 @@ footer.footer{
   span{height: auto;display: flex;}
 }
 
+
+//chat 
+.chat_list__basic_chat{
+  padding-right: 2rem;
+  & > div:first-child {
+    order: 2;margin-right: 0;margin-left: 10px;
+  }
+}
+.chat_list__my_chat{
+  padding-left: 2rem;
+  & > div:last-child {
+    background-color: rgb(224, 243, 119);    
+  }
+}

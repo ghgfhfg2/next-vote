@@ -31,9 +31,12 @@ const storage = getStorage();
 
 
 function ViewCon({uid}) {
-  const [domWid, setDomWid] = useState()
-  useEffect(() => {
-    setDomWid(document.body.clientWidth)
+  const rankingBtnRef = useRef();
+  const [btnTopPx, setBtnTopPx] = useState();
+  const [domWid, setDomWid] = useState();
+
+  useEffect(() => {    
+    setDomWid(document.body.clientWidth);
     const script = document.createElement('script')
     script.src = 'https://developers.kakao.com/sdk/js/kakao.js'
     script.async = true
@@ -42,6 +45,8 @@ function ViewCon({uid}) {
       document.body.removeChild(script)
     }    
   }, [])
+
+  
 
   const scrollBox = useRef();
   const formRef = useRef();
@@ -437,13 +442,24 @@ function ViewCon({uid}) {
     setrankView(!rankView);
   }
 
+
+  useEffect(()=> {
+    setTimeout(()=>{
+      rankingBtnRef.current.offsetTop && setBtnTopPx(rankingBtnRef.current.offsetTop);
+    },10)
+  },[])
+
+  useEffect(()=>{
+    setBtnTopPx(rankingBtnRef.current.offsetTop);
+  },[rankView])  
+
   const viewVoterList = (idx) => {
     let ref = voterRef.current[idx]
     ref.style.display = ref.style.display === 'none' ? 'flex' : 'none'
   }
 
   return <>
-    <div className={style.view_con_box} style={{'--domWid':`${domWid}px`}}>
+    <div className={style.view_con_box} style={{'--domWidPx':`${domWid}px`,'--btnTop':`${btnTopPx}px`}}>
         {ranking.length > 0 && finishVote &&
           <div className={style.view_finish_pop}>
             <article className={style.view_finish_con}>
@@ -498,7 +514,7 @@ function ViewCon({uid}) {
           ))}
         </ul>
         }
-        <button type="button" className={style.btn_fold} onClick={toggleRanking}>
+        <button ref={rankingBtnRef} type="button" className={style.btn_fold} onClick={toggleRanking}>
         {rankView ? (
           <><IoIosArrowUp />랭킹숨기기</>
         ):(

@@ -60,7 +60,7 @@ function RoomChat({userInfo,uid,chatList,chatLength}) {
 
   return (
     <div ref={scrollBox} className={style.room_chat_box}>
-      <ChatList uid={uid} chatList={chatList} />
+      <ChatList uid={uid} chatList={chatList} userInfo={userInfo} />
       <Form ref={chatFormRef} onFinish={onFinish}>
         <Form.Item
           name="chat"

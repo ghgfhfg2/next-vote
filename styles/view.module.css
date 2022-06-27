@@ -6,7 +6,7 @@
   position: fixed;
   left: 50%;
   top: 0;
-  width: var(--domWid);
+  width: var(--domWidPx);
   height: 100%;
   transform: translateX(-50%);
   z-index: 100;
@@ -47,7 +47,7 @@
 
 .view_finish_con {
   min-width: 300px;
-  max-width: calc(var(--domWid) - 40px);
+  max-width: calc(var(--domWidPx) - 40px);
   position: relative;
   z-index: 10;
   padding: 1.5rem;
@@ -206,7 +206,6 @@
   align-items: center;
   flex-direction: row;
   padding: 1rem;
-  border: 1px solid #ddd;
   border-radius: 1rem;
   box-shadow: 0 0 4px rgba(0, 0, 0, 0.2); }
 
@@ -539,9 +538,10 @@
   background-color: #fff; }
 
 .btn_switch {
-  position: absolute;
-  left: 1rem;
-  bottom: 60px;
+  position: fixed;
+  left: calc(50% - var(--domWidPx)/2 + 1rem);
+  top: calc(var(--btnTop) + 1rem);
+  z-index: 10;
   width: 70px;
   height: 30px;
   border-radius: 15px;

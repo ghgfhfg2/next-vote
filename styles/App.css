@@ -535,3 +535,17 @@ footer.footer a svg {
 .search_input .ant-btn-primary span {
   height: auto;
   display: flex; }
+
+.chat_list__basic_chat {
+  padding-right: 2rem; }
+
+.chat_list__basic_chat > div:first-child {
+  order: 2;
+  margin-right: 0;
+  margin-left: 10px; }
+
+.chat_list__my_chat {
+  padding-left: 2rem; }
+
+.chat_list__my_chat > div:last-child {
+  background-color: #e0f377; }
