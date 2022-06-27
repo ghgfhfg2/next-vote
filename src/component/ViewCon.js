@@ -1,15 +1,17 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from "react-redux";
-import { Button, message,Spin, Image } from "antd";
+import { message,Spin, Image } from "antd";
 import { db } from "src/firebase";
-import { ref as dRef, set, onValue, off, runTransaction, update } from "firebase/database";
+import { ref as dRef, set, onValue, off, runTransaction, update, query, orderByChild, limitToLast } from "firebase/database";
 import { getFormatDate } from "@component/CommonFunc";
-import uuid from "react-uuid"
+import uuid from "react-uuid";
 import style from "styles/view.module.css";
-import { AiOutlineLike, AiTwotoneLike, AiOutlineTrophy } from "react-icons/ai";
+import { AiOutlineTrophy } from "react-icons/ai";
+import { BsChatDots,BsChatDotsFill } from "react-icons/bs";
+import { MdOutlineHowToVote, MdHowToVote } from "react-icons/md";
 
 import { FiExternalLink } from "react-icons/fi";
-import { IoIosArrowUp,IoIosArrowDown,IoIosList } from "react-icons/io";
+import { IoIosArrowUp,IoIosArrowDown } from "react-icons/io";
 import { BiTargetLock } from "react-icons/bi";
 import {useRouter} from 'next/router';
 import imageCompression from 'browser-image-compression';  
@@ -22,6 +24,8 @@ import {
 
 import SubmitForm from './view/SubmitForm';
 import RoomInfo from './view/RoomInfo';
+import RoomChat from './view/RoomChat';
+import RoomVote from './view/RoomVote';
 
 const storage = getStorage();
 
@@ -50,9 +54,43 @@ function ViewCon({uid}) {
   const [finishVote, setFinishVote] = useState(false)
   const [voteListData, setVoteListData] = useState();
   const [listLength, setListLength] = useState()
-
+  
   const [ranking, setRanking] = useState([]);
+  
+  const [chatList, setChatList] = useState([]);
+  const [chatLength, setChatLength] = useState();
+  
+
   useEffect(() => {
+    dRef(db, `chat_list/${uid}/list`)
+
+    let chatRef = query(dRef(db, `chat_list/${uid}/list`), orderByChild('date'), limitToLast(200));
+    onValue(chatRef, data=>{
+      let arr = [];
+      data.forEach((el,idx)=>{
+        arr.push(el.val())
+      })
+      arr = arr.map(el=>{
+        el.chat = el.chat.replace(/\|n\|/g, '<br />');
+        el.date = getFormatDate(new Date(el.date))
+        return el
+      })
+      arr.sort((a,b)=>{
+        return a.date - b.date
+      })
+      setChatLength(prev=>{
+        return prev === arr.length ? prev : arr.length
+      })
+      setChatList(arr)
+    })
+    return () => {
+      off(chatRef);
+    }
+  }, []);
+
+
+  useEffect(() => {
+
     let roomRef = dRef(db, `list/${uid}`)
       onValue(roomRef, data=>{
         if(!data.val().ing){
@@ -93,14 +131,14 @@ function ViewCon({uid}) {
         setRanking(rankArr)
       })
     return () => {
-      off(voteRef)
+      off(voteRef);      
     };
   }, [userInfo]);
 
   
 
   const scrollToBottom = () => {
-    scrollBox.current.scrollIntoView({block: "end"});
+    scrollBox?.current?.scrollIntoView({block: "end"});
   }
   useEffect(() => {
     scrollToBottom();
@@ -141,6 +179,12 @@ function ViewCon({uid}) {
 
   const [clipImg, setClipImg] = useState([]);
 
+
+  //스위치
+  const [roomType, setRoomType] = useState(true)
+  const onChangeSwitch = () => {
+    setRoomType(!roomType)
+  }
 
   const [submitLoading, setSubmitLoading] = useState(false)
 
@@ -462,90 +506,54 @@ function ViewCon({uid}) {
         )}
         </button>
       </div>
-      <ul className={style.vote_list} ref={scrollBox}>
-        {voteListData && voteListData.map((el,idx)=>(
-          <li
-           key={idx}
-           ref={list=>listRef.current[idx] = list}
-           data-uid={el.uid}
-          >
-            <div className={style.profile}>
-              {roomData && roomData.sender && roomData.sender === 1 &&
-                <span>{el.user_name}</span>
+      {
+        roomType && (
+          <RoomVote 
+            userInfo={userInfo}
+            roomData={roomData}
+            scrollBox={scrollBox} 
+            voteListData={voteListData} 
+            listRef={listRef}
+            voterRef={voterRef}
+            viewVoterList={viewVoterList}
+            onVote={onVote}
+          />
+        )
+      }
+      <div className={style.btn_switch} onClick={onChangeSwitch}>
+        <button type="button" className={style.btn_switch_vote}>
+          {roomType ? <MdHowToVote style={{fontSize:"18px"}} /> : <MdOutlineHowToVote style={{fontSize:"18px"}} /> }
+        </button>
+        <button type="button" className={style.btn_switch_chat}>
+          {roomType ? <BsChatDots /> : <BsChatDotsFill /> }
+        </button>
+      </div>
+      {
+        roomType ? (
+          <>
+            <div className={style.empty}></div>
+            {roomData && roomData.ing ? (
+              <div className={style.btn_open_box}>
+              <button type="button" className={style.btn_open} onClick={onSubmitPop}>의견제안</button>
+              {roomData && userInfo && roomData.host === userInfo.uid &&
+                <button type="button" className={style.btn_finish} onClick={onVoteFinish}>투표종료</button>
               }
-              <span className={style.date}>{`${el.date.hour}:${el.date.min}`}</span>
-            </div>
-            <div className={style.con}>
-              <div className={style.desc} style={roomData?.ing ? {marginRight:"10px"} : {}}>
-                <span className={style.vote_tit}>{el.title}</span>
-                {el.image &&
-                <div className="vote_img_list">
-                  <Image.PreviewGroup>
-                    {el.image.map((src,idx)=>(
-                      <>
-                      <Image key={idx} className={style.vote_img} src={src} />
-                      </>
-                      ))
-                    }
-                  </Image.PreviewGroup>
-                </div>
-                }
-                {el.link &&
-                <span className={style.vote_link}>
-                  <a href={el.link} target="_blank">링크이동<FiExternalLink /></a>
-                </span>
-                }                
               </div>
-              <div className={style.right_con}>                
-                {roomData && roomData.ing &&
-                <div className={style.btn_box}>
-                  <span className={style.count}>
-                    {el.vote_count > 0 ? <>{el.vote_count}</> : `0`}
-                  </span>
-                  {userInfo && 
-                  <Button className={style.btn_vote} onClick={()=>{onVote(el.uid,el.user_uid,el.vote_user,el.already_check)}}>
-                    
-                    {el.already_check ? (
-                      <AiTwotoneLike className={style.ic_vote} />
-                    ) : (
-                      <AiOutlineLike className={style.ic_vote} />
-                    )
-                    }
-                  </Button>
-                  }
-                </div>
-                }
-                {roomData && roomData.voter === 1 && 
-                  <>
-                    <button type='button' className={style.btn_vote_list_view} onClick={()=>{viewVoterList(idx)}}>
-                      <IoIosList />
-                      목록
-                    </button>
-                    <ul style={{display:"none"}} ref={voter => voterRef.current[idx] = voter}>
-                      {el.user_uid.map((user,idx2)=>(
-                        <li>{idx2+1} {user.name}</li>
-                      ))}
-                    </ul>    
-                  </> 
-                }         
+            ) : (
+              <div className={style.btn_open_box}>
+                <div className={style.finish_txt}>투표가 종료되었습니다</div>
               </div>
-            </div>
-          </li>
-        ))}
-      </ul>
-      <div className={style.empty}></div>
-      {roomData && roomData.ing ? (
-        <div className={style.btn_open_box}>
-        <button type="button" className={style.btn_open} onClick={onSubmitPop}>의견제안</button>
-        {roomData && userInfo && roomData.host === userInfo.uid &&
-          <button type="button" className={style.btn_finish} onClick={onVoteFinish}>투표종료</button>
-        }
-        </div>
-      ) : (
-        <div className={style.btn_open_box}>
-          <div className={style.finish_txt}>투표가 종료되었습니다</div>
-        </div>
-      )}
+            )}
+          </>
+        ) : (
+          <RoomChat 
+            userInfo={userInfo}
+            uid={uid}
+            chatList={chatList}
+            chatLength={chatLength}
+          />
+        )
+      }
       
       {submitPop &&
         <div className={style.bg_box} onClick={closeSubmitPop}></div>

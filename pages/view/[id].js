@@ -20,7 +20,7 @@ export default function View() {
   useEffect(() => {
     const listRef = ref(db, `list/${uid}/`)
     onValue(listRef, data=>{
-      let keys = Object.keys(data.val().vote_user);
+      let keys = Object.keys(data?.val()?.vote_user);
       if(userInfo && keys.includes(userInfo.uid)){
         data.val().password = '';
         setRoomData({

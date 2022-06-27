@@ -62,7 +62,6 @@
   height: 100vh;
   background-color: rgb(53, 57, 75);
   overflow: auto;
-  padding-bottom: 40px;
   position: relative;
 }
 .ranking_box{
@@ -124,7 +123,7 @@
   margin-bottom: 0;
   flex:1;
   padding:0 1rem;
-  padding-bottom: 40px;
+  padding-bottom: 60px;
   li{
     width: 100%;
     margin-top: 2rem;
@@ -332,3 +331,40 @@
 .voter_list{
   background-color: #fff;
 }
+
+
+//스위치
+.btn_switch{
+  position: absolute;
+  left: 1rem;bottom:60px;
+  width: 70px;height: 30px;
+  border-radius: 15px;
+  background-color: #fff;
+  overflow: hidden;
+  @include flex();
+  align-items: stretch;
+  button{
+    flex:1;min-width: 0;
+    border:0;
+    background-color: none;
+  }
+}
+
+// 채팅
+.room_chat_box{
+  width: 100%;height: calc(100% + 40px);
+  padding: 0 1rem;
+  overflow: auto;
+  form{
+    @include flex();
+    align-items: stretch;
+    position: absolute;
+    bottom: 0;left: 0;
+    width: 100%;
+  }
+}
+.room_chat_list{
+  flex:1
+}
+.room_chat_input{margin-bottom: 0;flex:1;height: 100%;}
+.room_chat_textArea{height: 50px !important;resize: none;}

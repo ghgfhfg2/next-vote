@@ -89,7 +89,6 @@
   height: 100vh;
   background-color: #35394b;
   overflow: auto;
-  padding-bottom: 40px;
   position: relative; }
 
 .ranking_box {
@@ -171,7 +170,7 @@
   margin-bottom: 0;
   flex: 1;
   padding: 0 1rem;
-  padding-bottom: 40px; }
+  padding-bottom: 60px; }
 
 .vote_list li {
   width: 100%;
@@ -538,3 +537,53 @@
 
 .voter_list {
   background-color: #fff; }
+
+.btn_switch {
+  position: absolute;
+  left: 1rem;
+  bottom: 60px;
+  width: 70px;
+  height: 30px;
+  border-radius: 15px;
+  background-color: #fff;
+  overflow: hidden;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  align-items: stretch; }
+
+.btn_switch button {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background-color: none; }
+
+.room_chat_box {
+  width: 100%;
+  height: calc(100% + 40px);
+  padding: 0 1rem;
+  overflow: auto; }
+
+.room_chat_box form {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  align-items: stretch;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%; }
+
+.room_chat_list {
+  flex: 1; }
+
+.room_chat_input {
+  margin-bottom: 0;
+  flex: 1;
+  height: 100%; }
+
+.room_chat_textArea {
+  height: 50px !important;
+  resize: none; }
