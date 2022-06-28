@@ -64,11 +64,12 @@ function ViewCon({uid}) {
   
   const [chatList, setChatList] = useState([]);
   const [chatLength, setChatLength] = useState();
+
+  const [newChatState, setNewChatState] = useState(false)
+  const [newVoteState, setNewVoteState] = useState(false)
   
 
   useEffect(() => {
-    dRef(db, `chat_list/${uid}/list`)
-
     let chatRef = query(dRef(db, `chat_list/${uid}/list`), orderByChild('date'), limitToLast(200));
     onValue(chatRef, data=>{
       let arr = [];
@@ -84,6 +85,9 @@ function ViewCon({uid}) {
         return a.date - b.date
       })
       setChatLength(prev=>{
+        if(prev !== arr.length && roomType === true){
+          setNewChatState(true);
+        }
         return prev === arr.length ? prev : arr.length
       })
       setChatList(arr)
@@ -126,6 +130,9 @@ function ViewCon({uid}) {
           return a.date.timestamp - b.date.timestamp;
         })
         setListLength(prev=>{
+          if(prev !== arr.length && roomType === false){
+            setNewVoteState(true);
+          }
           return prev === arr.length ? prev : arr.length
         })
         setVoteListData(arr)
@@ -187,8 +194,14 @@ function ViewCon({uid}) {
 
   //스위치
   const [roomType, setRoomType] = useState(true)
-  const onChangeSwitch = () => {
-    setRoomType(!roomType)
+  const onChangeSwitch = (type) => {
+    if(type === 'vote') {
+      setNewVoteState(false);
+      setRoomType(true);
+    }else{
+      setNewChatState(false)
+      setRoomType(false);
+    }
   }
 
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -536,11 +549,17 @@ function ViewCon({uid}) {
           />
         )
       }
-      <div className={style.btn_switch} onClick={onChangeSwitch}>
-        <button type="button" className={style.btn_switch_vote}>
+      <div className={style.btn_switch}>
+        <button type="button" onClick={()=>{onChangeSwitch('vote')}} className={style.btn_switch_vote}
+          style={roomType ? {opacity:"1"} : {opacity:"0.6"}}
+        >
           {roomType ? <MdHowToVote style={{fontSize:"18px"}} /> : <MdOutlineHowToVote style={{fontSize:"18px"}} /> }
         </button>
-        <button type="button" className={style.btn_switch_chat}>
+        {newVoteState && <span className={style.btn_switch_ic_new_vote}>n</span>}
+        {newChatState && <span className={style.btn_switch_ic_new_chat}>n</span>}
+        <button type="button" onClick={()=>{onChangeSwitch('chat')}} className={style.btn_switch_chat}
+          style={roomType ? {opacity:"0.6"} : {opacity:"1"}}
+        >
           {roomType ? <BsChatDots /> : <BsChatDotsFill /> }
         </button>
       </div>

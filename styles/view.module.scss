@@ -338,16 +338,37 @@
   left: calc(50% - var(--domWidPx)/2 + 1rem);top: calc(var(--btnTop) + 1rem);
   z-index: 10;
   width: 70px;height: 30px;
-  border-radius: 15px;
-  background-color: #fff;
-  overflow: hidden;
   @include flex();
   align-items: stretch;
   button{
     flex:1;min-width: 0;
     border:0;
     background-color: none;
+    position: relative;
+    @include flex($j:center);
   }
+}
+.btn_switch_vote{
+  border-top-left-radius: 15px;
+  border-bottom-left-radius: 15px;
+}
+.btn_switch_chat{
+  border-top-right-radius: 15px;
+  border-bottom-right-radius: 15px;
+}
+.btn_switch_ic_new_vote{
+  position: absolute;left: 17px;top:-3px;
+  border-radius: 50%;background-color: rgb(228, 47, 47);color: #fff;
+  @include flex($j:center);
+  font-size: 11px;
+  width: 15px;height: 15px;z-index: 10;
+}
+.btn_switch_ic_new_chat{
+  position: absolute;left: 52px;top:-3px;
+  border-radius: 50%;background-color: rgb(228, 47, 47);color: #fff;
+  @include flex($j:center);
+  font-size: 11px;
+  width: 15px;height: 15px;z-index: 10;
 }
 
 // 채팅
