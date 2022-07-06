@@ -44,10 +44,10 @@ function Mypage() {
       })
       setListData(listArr)
     });    
-    return () => {
-      off(listRef)
-    };
-  }, [])
+      return () => {
+        off(listRef)
+      };
+    }, [userInfo])
   
   const onDel = async (uid) => {
     const listRef = sRef(storage,`images/${uid}`);

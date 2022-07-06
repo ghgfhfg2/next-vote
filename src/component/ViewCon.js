@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector } from "react-redux";
 import { message,Spin, Image } from "antd";
 import { db } from "src/firebase";
-import { ref as dRef, set, onValue, off, runTransaction, update, query, orderByChild, limitToLast } from "firebase/database";
+import { ref as dRef, set, onValue, off, runTransaction, update, query, orderByChild, limitToLast, orderByKey } from "firebase/database";
 import { getFormatDate } from "@component/CommonFunc";
 import uuid from "react-uuid";
 import style from "styles/view.module.css";
@@ -32,7 +32,6 @@ const storage = getStorage();
 
 function ViewCon({uid}) {
   const rankingBtnRef = useRef();
-  const [btnTopPx, setBtnTopPx] = useState();
   const [domWid, setDomWid] = useState();
 
   useEffect(() => {    
@@ -56,17 +55,17 @@ function ViewCon({uid}) {
   
   const userInfo = useSelector((state) => state.user.currentUser);
   const [roomData, setRoomData] = useState();
-  const [finishVote, setFinishVote] = useState(false)
+  const [finishVote, setFinishVote] = useState(false);
   const [voteListData, setVoteListData] = useState();
-  const [listLength, setListLength] = useState()
+  const [listLength, setListLength] = useState();
   
   const [ranking, setRanking] = useState([]);
   
   const [chatList, setChatList] = useState([]);
   const [chatLength, setChatLength] = useState();
 
-  const [newChatState, setNewChatState] = useState(false)
-  const [newVoteState, setNewVoteState] = useState(false)
+  const [newChatState, setNewChatState] = useState(false);
+  const [newVoteState, setNewVoteState] = useState(false);
   
 
   useEffect(() => {
@@ -84,10 +83,21 @@ function ViewCon({uid}) {
       arr.sort((a,b)=>{
         return a.date - b.date
       })
+      
+      let lastIdx = arr[arr.length-1]?.idx;
       setChatLength(prev=>{
-        if(prev !== arr.length && roomType === true){
-          setNewChatState(true);
+        let key = `${uid}_chat`;        
+        let chk = JSON.parse(localStorage.getItem('voteChatLocalStorage'));
+        chk = chk ? chk[key] : chk; 
+        console.log(chk,lastIdx,roomType)  
+        if(chk !== lastIdx){   
+          if(roomType){
+            setNewChatState(true);
+          }else{
+            setChatStorage();
+          }
         }
+
         return prev === arr.length ? prev : arr.length
       })
       setChatList(arr)
@@ -129,9 +139,19 @@ function ViewCon({uid}) {
         arr.sort((a,b)=>{
           return a.date.timestamp - b.date.timestamp;
         })
+
+        let lastIdx = arr.length;
         setListLength(prev=>{
-          if(prev !== arr.length && roomType === false){
-            setNewVoteState(true);
+          let key = `${uid}_vote`;        
+          let chk = JSON.parse(localStorage.getItem('voteChatLocalStorage'))
+          chk = chk ? chk[key] : chk;
+                    
+          if(chk !== lastIdx){            
+            if(!roomType){
+              setNewVoteState(true);
+            }else{
+              setVoteStorage();
+            }
           }
           return prev === arr.length ? prev : arr.length
         })
@@ -195,13 +215,40 @@ function ViewCon({uid}) {
   //스위치
   const [roomType, setRoomType] = useState(true)
   const onChangeSwitch = (type) => {
+    
     if(type === 'vote') {
-      setNewVoteState(false);
-      setRoomType(true);
+      setVoteStorage();
     }else{
-      setNewChatState(false)
-      setRoomType(false);
+      setChatStorage()
     }
+  }
+
+  const setVoteStorage = () => {
+      let obj = {}
+      let getStorage = JSON.parse(localStorage.getItem('voteChatLocalStorage'));
+      setNewVoteState(false);
+      let key = `${uid}_vote`;
+      obj[key] = listLength;
+      getStorage = {
+        ...getStorage,
+        ...obj
+      }
+      localStorage.setItem('voteChatLocalStorage',JSON.stringify(getStorage))
+      setRoomType(true);
+  }  
+
+  const setChatStorage = () => {
+    let obj = {}
+    let getStorage = JSON.parse(localStorage.getItem('voteChatLocalStorage'));
+    setNewChatState(false)
+    let key = `${uid}_chat`;
+    obj[key] = chatLength;
+    getStorage = {
+      ...getStorage,
+      ...obj
+    }
+    localStorage.setItem('voteChatLocalStorage',JSON.stringify(getStorage))
+    setRoomType(false);
   }
 
   const [submitLoading, setSubmitLoading] = useState(false)
@@ -456,23 +503,13 @@ function ViewCon({uid}) {
   }
 
 
-  useEffect(()=> {
-    setTimeout(()=>{
-      rankingBtnRef.current.offsetTop && setBtnTopPx(rankingBtnRef.current.offsetTop);
-    },10)
-  },[])
-
-  useEffect(()=>{
-    setBtnTopPx(rankingBtnRef.current.offsetTop);
-  },[rankView])  
-
   const viewVoterList = (idx) => {
     let ref = voterRef.current[idx]
     ref.style.display = ref.style.display === 'none' ? 'flex' : 'none'
   }
 
   return <>
-    <div className={style.view_con_box} style={{'--domWidPx':`${domWid}px`,'--btnTop':`${btnTopPx}px`}}>
+    <div className={style.view_con_box} style={{'--domWidPx':`${domWid}px`}}>
         {ranking.length > 0 && finishVote &&
           <div className={style.view_finish_pop}>
             <article className={style.view_finish_con}>
@@ -534,6 +571,20 @@ function ViewCon({uid}) {
           <><IoIosArrowDown />랭킹보기</>
         )}
         </button>
+        <div className={style.btn_switch}>
+          <button type="button" onClick={()=>{onChangeSwitch('vote')}} className={style.btn_switch_vote}
+            style={roomType ? {opacity:"1"} : {opacity:"0.6"}}
+          >
+            {roomType ? <MdHowToVote style={{fontSize:"18px"}} /> : <MdOutlineHowToVote style={{fontSize:"18px"}} /> }
+          </button>
+          {newVoteState && <span className={style.btn_switch_ic_new_vote}>n</span>}
+          {newChatState && <span className={style.btn_switch_ic_new_chat}>n</span>}
+          <button type="button" onClick={()=>{onChangeSwitch('chat')}} className={style.btn_switch_chat}
+            style={roomType ? {opacity:"0.6"} : {opacity:"1"}}
+          >
+            {roomType ? <BsChatDots /> : <BsChatDotsFill /> }
+          </button>
+        </div>
       </div>
       {
         roomType && (
@@ -549,20 +600,7 @@ function ViewCon({uid}) {
           />
         )
       }
-      <div className={style.btn_switch}>
-        <button type="button" onClick={()=>{onChangeSwitch('vote')}} className={style.btn_switch_vote}
-          style={roomType ? {opacity:"1"} : {opacity:"0.6"}}
-        >
-          {roomType ? <MdHowToVote style={{fontSize:"18px"}} /> : <MdOutlineHowToVote style={{fontSize:"18px"}} /> }
-        </button>
-        {newVoteState && <span className={style.btn_switch_ic_new_vote}>n</span>}
-        {newChatState && <span className={style.btn_switch_ic_new_chat}>n</span>}
-        <button type="button" onClick={()=>{onChangeSwitch('chat')}} className={style.btn_switch_chat}
-          style={roomType ? {opacity:"0.6"} : {opacity:"1"}}
-        >
-          {roomType ? <BsChatDots /> : <BsChatDotsFill /> }
-        </button>
-      </div>
+      
       {
         roomType ? (
           <>

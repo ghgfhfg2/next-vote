@@ -63,6 +63,17 @@
   background-color: rgb(53, 57, 75);
   overflow: auto;
   position: relative;
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 8px;
+  }   
 }
 .ranking_box{
   width: 100%;  
@@ -334,8 +345,9 @@
 
 //스위치
 .btn_switch{
-  position: fixed;
-  left: calc(50% - var(--domWidPx)/2 + 1rem);top: calc(var(--btnTop) + 1rem);
+  position: relative;
+  margin-top: -18px;
+  margin-left: 1rem;
   z-index: 10;
   width: 70px;height: 30px;
   @include flex();
@@ -383,6 +395,17 @@
     bottom: 0;left: 0;
     width: 100%;
   }
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255,255,255,0.5);
+    border-radius: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: rgba(255,255,255,0.1);
+    border-radius: 8px;
+  }  
 }
 .room_chat_list{
   flex:1

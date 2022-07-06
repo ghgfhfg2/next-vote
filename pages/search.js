@@ -15,6 +15,9 @@ function SearchPage() {
       .then(data=>{
         let listArr = [];
         data.forEach(el=>{
+          if(!el.val().title) {
+            return
+          }
           if(el.val().title.includes(e) || (el.key === e)){
             listArr.push({
               ...el.val(),
