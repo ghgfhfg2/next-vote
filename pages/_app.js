@@ -22,6 +22,7 @@ function App({ Component, pageProps }) {
   const [authCheck, setAuthCheck] = useState(false);
   const [isLoading, setisLoading] = useState(true);
 
+
   auth.onAuthStateChanged((user) => {
     if (user) {
       const userRef = ref(db, `user/${user.uid}/nick`);

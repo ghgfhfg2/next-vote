@@ -4,7 +4,10 @@ class MyDocument extends Document {
   render() {
     return (
       <Html lang="ko">
-        <Head />
+        <Head>
+          <link rel="manifest" href="/manifest.json" />
+          <meta name='theme-color' content='#317EFB' />
+        </Head>
         <body>
           <Main />
           <NextScript />

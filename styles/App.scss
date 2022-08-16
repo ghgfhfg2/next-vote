@@ -102,6 +102,7 @@ nav,
 section {
   display: block; }
 
+html{height: auto !important;}
 body {
   line-height: 1; 
 
@@ -198,6 +199,20 @@ footer.footer{
   width: 100%;height: 60px;
   box-shadow: 0 -1px 2px rgba(0,0,0,0.2);
   @include flex();
+  .ic_btn_app_down{
+    @include flex();
+    position: absolute;
+    right: 10px;
+    bottom: 70px;
+    background-color: $p-color;
+    border: 0;
+    color: #fff;
+    border-radius: 7px;
+    font-size: 17px;
+    padding:7px 10px;
+    box-shadow: 0 0 6px 1px rgba(0,0,0,0.25);
+    span{font-size: 11px;margin-left: 5px;}
+  }
   a{
     flex:1;
     color:#333;

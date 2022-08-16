@@ -195,6 +195,8 @@ function ViewCon({uid}) {
     }
     
   }
+
+
   //base64 to file
   const dataURLtoFile = (dataurl, fileName) => {
       let arr = dataurl.split(','),

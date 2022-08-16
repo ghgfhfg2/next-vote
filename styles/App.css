@@ -105,6 +105,9 @@ nav,
 section {
   display: block; }
 
+html {
+  height: auto !important; }
+
 body {
   line-height: 1; }
 
@@ -237,6 +240,26 @@ footer.footer {
   justify-content: flex-start;
   align-items: center;
   flex-direction: row; }
+
+footer.footer .ic_btn_app_down {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  flex-direction: row;
+  position: absolute;
+  right: 10px;
+  bottom: 70px;
+  background-color: #1890ff;
+  border: 0;
+  color: #fff;
+  border-radius: 7px;
+  font-size: 17px;
+  padding: 7px 10px;
+  box-shadow: 0 0 6px 1px rgba(0, 0, 0, 0.25); }
+
+footer.footer .ic_btn_app_down span {
+  font-size: 11px;
+  margin-left: 5px; }
 
 footer.footer a {
   flex: 1;
